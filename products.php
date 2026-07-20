@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 // ===================================================================
 // ИМПОРТ/ЭКСПОРТ ТОВАРОВ (Products Boostore.pro)
 // ===================================================================
@@ -603,6 +603,13 @@ $filename = $id.($safeName!==''?'-'.$safeName:'').'-'.$language.'.html';
             'video'=>$video,'views'=>$views,'orders'=>$orders,'shipping_price'=>$shippingPrice,
             'add_date'=>$addDate,'last_edit'=>$lastEdit,
         ];
+        if (!empty($a['images']) && is_array($a['images'])) {
+            foreach ($a['images'] as $imgIdx => $img) {
+                if (!empty($img['src'])) {
+                    $h .= '<meta name="image_'.$imgIdx.'" content="'.htmlspecialchars($img['src'], ENT_QUOTES).'">'."\n";
+                }
+            }
+        }
         foreach ($metaList as $k=>$v) $h .= '<meta name="'.htmlspecialchars($k).'" content="'.htmlspecialchars((string)$v).'">'."\n";
         $description_tab_1 = $a['description_tab_1'] ?? '';
         $description_tab_2 = $a['description_tab_2'] ?? '';
