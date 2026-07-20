@@ -608,7 +608,6 @@ $filename = $id.($safeName!==''?'-'.$safeName:'').'-'.$language.'.html';
         $description_tab_2 = $a['description_tab_2'] ?? '';
         $description_tab_3 = $a['description_tab_3'] ?? '';
         $description_tab_4 = $a['description_tab_4'] ?? '';
-        $description_tab_5 = $a['description_tab_5'] ?? '';
         $short_description = $a['short_description'] ?? $shortDesc;
         $h .= '<!-- CONTENT SEPARATOR BELOW 1: short_description -->'."\n".$short_description."\n";
         $h .= '<!-- CONTENT SEPARATOR BELOW 2: description -->'."\n".$description."\n";
@@ -1511,7 +1510,11 @@ if ($expDateMode === 'fixed' && $expDateFixed !== '') {
     $datestamp = dateToTimestamp($datestampStr);
 }
 $description=extractContentBySeparator($html,2);
-$payload=['title'=>$title,'meta_title'=>$metaTitle,'meta_description'=>$metaDesc,'meta_keywords'=>$metaKeywords,'tags'=>$tags,'description'=>$description,'short_description'=>$shortDesc,'name'=>$slug,'slug'=>$slug,'language'=>$language,'status'=>$status,'datestamp'=>$datestamp,'schema'=>$schema,'priority'=>$priority,'subdomain'=>$subdomain,'view'=>$view,'settings_comments'=>$settingsComments,'settings_tags'=>$settingsTags,'comments'=>$comments,'settings_rating'=>$settingsRating,'show_tree'=>$showTree,'show_inlist'=>$showInlist,'show_period'=>$showPeriod,'rating'=>$rating,'stock_status'=>(int)$stockStatus,'price'=>$productPrice,'featured'=>((int)$productHit===1?true:false),'new'=>((int)$productNew===1?true:false),'reducedprice'=>((int)$productSale===1?true:false),'promotion'=>(int)$productSale,'regular_price'=>$productPriceOld,'sku'=>$productSku,'additional'=>$productAdditional,'currency'=>$productCurrency,'access'=>$access,'stock_quantity'=>$stockQuantity,'discount'=>$discount,'moq'=>$moq,'promotion_text'=>$promotionText,'promotion_expires'=>$promotionExpires,'bought_with'=>$boughtWith,'products_synonyms'=>$productsSynonyms,'producer'=>$producerArr,'images'=>$imagesArr,'type'=>$productType,'attributes'=>$attributesArr,'variations_exists'=>$variationsExists,'variations'=>$variationsArr,'weight'=>$weight,'weight_units'=>$weightUnits,'dimensions'=>$dimensionsArr,'video'=>$video,'views'=>$views,'orders'=>$orders,'shipping_price'=>$shippingPrice,'add_date'=>$addDate,'last_edit'=>$lastEdit];
+$description_tab_1=extractContentBySeparator($html,3);
+$description_tab_2=extractContentBySeparator($html,4);
+$description_tab_3=extractContentBySeparator($html,5);
+$description_tab_4=extractContentBySeparator($html,6);
+$payload=['title'=>$title,'meta_title'=>$metaTitle,'meta_description'=>$metaDesc,'meta_keywords'=>$metaKeywords,'tags'=>$tags,'description'=>$description,'short_description'=>$shortDesc,'description_tab_1'=>$description_tab_1,'description_tab_2'=>$description_tab_2,'description_tab_3'=>$description_tab_3,'description_tab_4'=>$description_tab_4,'name'=>$slug,'slug'=>$slug,'language'=>$language,'status'=>$status,'datestamp'=>$datestamp,'schema'=>$schema,'priority'=>$priority,'subdomain'=>$subdomain,'view'=>$view,'settings_comments'=>$settingsComments,'settings_tags'=>$settingsTags,'comments'=>$comments,'settings_rating'=>$settingsRating,'show_tree'=>$showTree,'show_inlist'=>$showInlist,'show_period'=>$showPeriod,'rating'=>$rating,'stock_status'=>(int)$stockStatus,'price'=>$productPrice,'featured'=>((int)$productHit===1?true:false),'new'=>((int)$productNew===1?true:false),'reducedprice'=>((int)$productSale===1?true:false),'promotion'=>(int)$productSale,'regular_price'=>$productPriceOld,'sku'=>$productSku,'additional'=>$productAdditional,'currency'=>$productCurrency,'access'=>$access,'stock_quantity'=>$stockQuantity,'discount'=>$discount,'moq'=>$moq,'promotion_text'=>$promotionText,'promotion_expires'=>$promotionExpires,'bought_with'=>$boughtWith,'products_synonyms'=>$productsSynonyms,'producer'=>$producerArr,'images'=>$imagesArr,'type'=>$productType,'attributes'=>$attributesArr,'variations_exists'=>$variationsExists,'variations'=>$variationsArr,'weight'=>$weight,'weight_units'=>$weightUnits,'dimensions'=>$dimensionsArr,'video'=>$video,'views'=>$views,'orders'=>$orders,'shipping_price'=>$shippingPrice,'add_date'=>$addDate,'last_edit'=>$lastEdit];
 $doDelete = (isset($meta['delete']) && strtolower($meta['delete']) === 'true');
 if ($doDelete && $articleId > 0) { $payload['delete'] = true; $payload['id'] = $articleId; }
 if($expMode !== 'insert') $payload['update_exists'] = true;
@@ -1531,7 +1534,7 @@ elseif($categoryName!==''){
 }
 if($multilangid)$payload['multilangid']=$multilangid;
 if($exportTextOnly){
-    $keep = ['id','update_exists','delete','title','description','short_description','name','slug','language','multilangid','sku'];
+    $keep = ['id','update_exists','delete','title','description','short_description','description_tab_1','description_tab_2','description_tab_3','description_tab_4','name','slug','language','multilangid','sku'];
     $payload = array_intersect_key($payload, array_flip($keep));
 }
 $jsonPayload=json_encode($payload,JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);$descSize=mb_strlen($description);$metaCount=count($meta);
