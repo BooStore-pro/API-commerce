@@ -1456,7 +1456,7 @@ details.card>summary::-webkit-details-marker{display:none}details.card>summary .
 <li data-i18n="step7">Нажмите <strong>"ОТПРАВИТЬ"</strong> — изменения отправятся на сайт</li>
 </ol>
 <h3 data-i18n="file_naming">Именование файлов</h3><p data-i18n="file_naming_desc">Шаблон: <code>{id}-{name}-{language}.html</code>. Пример: <code>123-moya-statya-ru.html</code></p>
-<h3 data-i18n="file_format">Формат файла</h3><p data-i18n="file_format_desc">Мета-данные в <code>&lt;meta name="..." content="..."&gt;</code> передают настройки страницы: slug, заголовок, язык, теги, дату публикации, статус доступа, описание и системные параметры. Содержимое — после <code>&lt;!-- PAGE SEPARATOR BELOW --&gt;</code></p>
+<h3 data-i18n="file_format">Формат файла</h3><p data-i18n="file_format_desc">Мета-данные в <code>&lt;meta name="..." content="..."&gt;</code> передают настройки страницы: slug, заголовок, язык, теги, дату публикации, статус доступа, описание и системные параметры. Содержимое — после <code>&lt;!-- CONTENT SEPARATOR BELOW --&gt;</code></p>
 <p style="color:#ff9800;font-size:12px;margin-top:6px;">💡 <strong>Удаление:</strong> добавьте <code>&lt;meta name="delete" content="true"&gt;</code> в HTML-файл и укажите <code>id</code> страницы — при экспорте запись будет удалена с сервера.</p>
 </div></details>
 <div class="card"><div class="card-header" data-i18n="actions_title">⚡ Действия</div><div class="card-body">
@@ -1607,7 +1607,7 @@ var i18n = {
     'file_naming':'Именование файлов',
     'file_naming_desc':'Шаблон: {id}-{name}-{language}.html. Пример: 123-moya-stranica-ru.html',
     'file_format':'Формат файла',
-    'file_format_desc':'Мета-данные в &lt;meta name=&quot;...&quot; content=&quot;...&quot;&gt; передают настройки страницы: slug, заголовок, язык, теги, дату публикации, статус доступа, описание и системные параметры. Содержимое — после &lt;!-- PAGE SEPARATOR BELOW --&gt;',
+    'file_format_desc':'Мета-данные в &lt;meta name=&quot;...&quot; content=&quot;...&quot;&gt; передают настройки страницы. Содержимое — после &lt;!-- CONTENT SEPARATOR BELOW --&gt;',
     'actions_title':'⚡ Действия',
     'btn_get':'📥 СКАЧАТЬ',
     'btn_update':'📤 ОТПРАВИТЬ',
@@ -1714,7 +1714,7 @@ var i18n = {
     'file_naming':'File Naming',
     'file_naming_desc':'Template: {id}-{name}-{language}.html. Example: 123-moya-statya-ru.html',
     'file_format':'File Format',
-    'file_format_desc':'Meta data in &lt;meta name=&quot;...&quot; content=&quot;...&quot;&gt; carries page settings: slug, title, language, tags, publication date, access status, description and system parameters. Content after &lt;!-- PAGE SEPARATOR BELOW --&gt;',
+    'file_format_desc':'Meta data in &lt;meta name=&quot;...&quot; content=&quot;...&quot;&gt; carries page settings. Content after &lt;!-- CONTENT SEPARATOR BELOW --&gt;',
     'actions_title':'⚡ Actions',
     'btn_get':'📥 DOWNLOAD',
     'btn_update':'📤 UPLOAD',
@@ -1821,7 +1821,7 @@ var i18n = {
     'file_naming':'Іменування файлів',
     'file_naming_desc':'Шаблон: {id}-{name}-{language}.html. Приклад: 123-moya-statya-ru.html',
     'file_format':'Формат файлу',
-    'file_format_desc':'Мета-дані в &lt;meta name=&quot;...&quot; content=&quot;...&quot;&gt; передають налаштування сторінки: slug, заголовок, мову, теги, дату публікації, статус доступу, опис та системні параметри. Вміст після &lt;!-- PAGE SEPARATOR BELOW --&gt;',
+    'file_format_desc':'Мета-дані в &lt;meta name=&quot;...&quot; content=&quot;...&quot;&gt; передають налаштування сторінки. Вміст після &lt;!-- CONTENT SEPARATOR BELOW --&gt;',
     'actions_title':'⚡ Дії',
     'btn_get':'📥 ОТРИМАТИ СТОРІНКИ',
     'btn_update':'📤 ВІДПРАВИТИ СТОРІНКИ',

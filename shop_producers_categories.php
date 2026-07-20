@@ -1662,7 +1662,7 @@ details.card>summary::-webkit-details-marker{display:none}details.card>summary .
 <li data-i18n="step7">Нажмите <strong>"ОТПРАВИТЬ"</strong> — изменения отправятся на сайт</li>
 </ol>
 <h3 data-i18n="file_naming">Именование файлов</h3><p data-i18n="file_naming_desc">Шаблон: <code>{id}-{name}-{language}.html</code>. Пример: <code>123-moya-statya-ru.html</code></p>
-<h3 data-i18n="file_format">Формат файла</h3><p data-i18n="file_format_desc">Мета-данные и поля производителя в <code>&lt;meta name="..." content="..."&gt;</code> передают настройки производителя: slug, заголовок, язык, теги, дату публикации, статус доступа, категорию, цену, наличие, описание и системные параметры. Содержимое производителя — после <code>&lt;!-- РАЗДЕЛИТЕЛЬ СТАТЬЯ НИЖЕ --&gt;</code></p>
+<h3 data-i18n="file_format">Формат файла</h3><p data-i18n="file_format_desc">Мета-данные и поля производителя в <code>&lt;meta name="..." content="..."&gt;</code> передают настройки производителя: slug, заголовок, язык, теги, дату публикации, статус доступа, категорию, цену, наличие, описание и системные параметры. Формат: текст производителя — после <code>&lt;!-- PRODUCER TEXT BELOW --&gt;</code>, кнопка — после <code>&lt;!-- PRODUCER BUTTON BELOW --&gt;</code></p>
 <p style="color:#ff9800;font-size:12px;margin-top:6px;">💡 <strong>Удаление:</strong> добавьте <code>&lt;meta name="delete" content="true"&gt;</code> в HTML-файл и укажите <code>id</code> производителя — при экспорте запись будет удалена с сервера.</p>
 </div></details>
 <div class="card"><div class="card-header" data-i18n="actions_title">⚡ Действия</div><div class="card-body">
@@ -1824,7 +1824,7 @@ var i18n = {
     'file_naming':'Именование файлов',
     'file_naming_desc':'Шаблон: {id}-{name}-{language}.html. Пример: 123-moya-statya-ru.html',
     'file_format':'Формат файла',
-    'file_format_desc':'Мета-данные в &lt;meta name=&quot;...&quot; content=&quot;...&quot;&gt; передают настройки производителя: slug, заголовок, язык, теги, дату публикации, статус доступа, категорию, цену, наличие, описание и системные параметры. Содержимое производителя — после &lt;!-- РАЗДЕЛИТЕЛЬ СТАТЬЯ НИЖЕ --&gt;',
+    'file_format_desc':'Мета-данные в &lt;meta name=&quot;...&quot; content=&quot;...&quot;&gt; передают настройки производителя. Текст — после &lt;!-- PRODUCER TEXT BELOW --&gt;, кнопка — после &lt;!-- PRODUCER BUTTON BELOW --&gt;',
     'actions_title':'⚡ Действия',
     'btn_get':'📥 СКАЧАТЬ',
     'btn_update':'📤 ОТПРАВИТЬ',
@@ -1953,7 +1953,7 @@ var i18n = {
     'file_naming':'File Naming',
     'file_naming_desc':'Template: {id}-{name}-{language}.html. Example: 123-moya-statya-ru.html',
     'file_format':'File Format',
-    'file_format_desc':'Meta data in &lt;meta name=&quot;...&quot; content=&quot;...&quot;&gt; carries article settings: slug, title, language, tags, publication date, access status, category, planned, description and system parameters. Article content after &lt;!-- РАЗДЕЛИТЕЛЬ СТАТЬЯ НИЖЕ --&gt;',
+    'file_format_desc':'Meta data in &lt;meta name=&quot;...&quot; content=&quot;...&quot;&gt; carries producer settings. Text after &lt;!-- PRODUCER TEXT BELOW --&gt;, button after &lt;!-- PRODUCER BUTTON BELOW --&gt;',
     'actions_title':'⚡ Actions',
     'btn_get':'📥 DOWNLOAD',
     'btn_update':'📤 UPLOAD',
@@ -2082,7 +2082,7 @@ var i18n = {
     'file_naming':'Іменування файлів',
     'file_naming_desc':'Шаблон: {id}-{name}-{language}.html. Приклад: 123-moya-statya-ru.html',
     'file_format':'Формат файлу',
-    'file_format_desc':'Мета-дані в &lt;meta name=&quot;...&quot; content=&quot;...&quot;&gt; передають налаштування статті: slug, заголовок, мову, теги, дату публікації, статус доступу, категорію, planned, опис та системні параметри. Вміст статті після &lt;!-- РАЗДЕЛИТЕЛЬ СТАТЬЯ НИЖЕ --&gt;',
+    'file_format_desc':'Мета-дані в &lt;meta name=&quot;...&quot; content=&quot;...&quot;&gt; передають налаштування виробника. Текст — після &lt;!-- PRODUCER TEXT BELOW --&gt;, кнопка — після &lt;!-- PRODUCER BUTTON BELOW --&gt;',
     'actions_title':'⚡ Дії',
     'btn_get':'📥 ОТРИМАТИ СТАТТІ',
     'btn_update':'📤 ВІДПРАВИТИ СТАТТІ',
