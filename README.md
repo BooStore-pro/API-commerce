@@ -5,7 +5,7 @@ Boostore.pro — Management Scripts
 These PHP scripts allow you to **import** (download) and **export** (upload) data
 from your Boostore.pro site via the Commerce API.
 
-Available scripts in `/ai_boostore/`:
+Available scripts:
 
   products.php              — Shop products (prices, stock, images, categories, etc.)
   blog.php                  — Blog articles (multilingual, categories, tags)
