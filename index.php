@@ -273,12 +273,6 @@ body{background:linear-gradient(135deg,#0a0e1a 0%,#1a1a2e 50%,#16213e 100%);colo
 <?php else: ?>
 <p style="color:#888;font-size:14px;margin:8px 0;"><span data-i18n="no_sites">Нет настроенных сайтов</span> — добавьте новый домен ниже</p>
 <?php endif; ?>
-<div style="margin-top:12px;display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap;">
-<form method="post" action="" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;" onsubmit="var v=this.querySelector('[name=new_domain]').value.trim();if(!v||!v.includes('.')){alert('Введите домен или URL (например: site.com)');return false;}">
-<input type="text" name="new_domain" placeholder="site.com или https://site.com" style="padding:10px 14px;background:#0d1b2a;border:1px solid #0f3460;border-radius:8px;color:#e0e0e0;font-size:14px;width:240px;text-align:center;">
-<button type="submit" class="btn btn-pri" style="padding:10px 18px;font-size:14px;">➕ <span data-i18n="add_site">Добавить сайт</span></button>
-</form>
-</div>
 </div>
 
 <div class="grid">
@@ -468,6 +462,14 @@ body{background:linear-gradient(135deg,#0a0e1a 0%,#1a1a2e 50%,#16213e 100%);colo
 <?php endif; ?>
 </div>
 </div>
+</div>
+
+<div style="background:#16213e;border:1px solid #0f3460;border-radius:12px;padding:20px 24px;margin-top:24px;margin-bottom:24px;text-align:center;">
+<div style="font-size:13px;color:#888;margin-bottom:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;">➕ <span data-i18n="add_site">Добавить сайт</span></div>
+<form method="post" action="" style="display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap;" onsubmit="var v=this.querySelector('[name=new_domain]').value.trim();if(!v||!v.includes('.')){alert('Введите домен или URL (например: site.com)');return false;}">
+<input type="text" name="new_domain" placeholder="site.com или https://site.com" style="padding:10px 14px;background:#0d1b2a;border:1px solid #00d4ff;border-radius:8px;color:#e0e0e0;font-size:14px;width:260px;text-align:center;">
+<button type="submit" class="btn btn-pri" style="padding:10px 20px;font-size:14px;">➕ <span data-i18n="add_site">Добавить сайт</span></button>
+</form>
 </div>
 
 <div class="footer">
