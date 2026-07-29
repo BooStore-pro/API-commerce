@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 // ===================================================================
 // ИМПОРТ/ЭКСПОРТ СТРАНИЦ (Pages Boostore.pro)
 // ===================================================================
@@ -1137,9 +1137,9 @@ if ($articleId>0){
 } elseif ($articleId === 0 && ctype_digit($slug)) {
     $payload['id'] = (int)$slug;
 }
-if($multilangid)$payload['multilangid']=$multilangid;
+if($multilangid && $expFixMultilangid)$payload['multilangid']=$multilangid;
 if($exportTextOnly){
-    $keep = ['id','update_exists','delete','title','description','name','slug','language','multilangid'];
+    $keep = ['id','update_exists','delete','title','description','name','slug','language'];
     $payload = array_intersect_key($payload, array_flip($keep));
 }
 $jsonPayload=json_encode($payload,JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);$descSize=mb_strlen($description);$metaCount=count($meta);

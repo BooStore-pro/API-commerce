@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 // ===================================================================
 // ИМПОРТ/ЭКСПОРТ ТОВАРОВ (Products Boostore.pro)
 // ===================================================================
@@ -1539,9 +1539,9 @@ elseif($categoryName!==''){
     if($catId>0){ $payload['shop_cat_page_catid']=$catId; $payload['category_id']=$catId; }
     $payload['categories']=[['name'=>$categoryName]];
 }
-if($multilangid)$payload['multilangid']=$multilangid;
+if($multilangid && $expFixMultilangid)$payload['multilangid']=$multilangid;
 if($exportTextOnly){
-    $keep = ['id','update_exists','delete','title','description','short_description','description_tab_1','description_tab_2','description_tab_3','description_tab_4','name','slug','language','multilangid','sku'];
+    $keep = ['id','update_exists','delete','title','description','short_description','description_tab_1','description_tab_2','description_tab_3','description_tab_4','name','slug','language','sku'];
     $payload = array_intersect_key($payload, array_flip($keep));
 }
 $jsonPayload=json_encode($payload,JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);$descSize=mb_strlen($description);$metaCount=count($meta);

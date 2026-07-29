@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 // ===================================================================
 // ИМПОРТ/ЭКСПОРТ БЛОКОВ/МЕНЮ (Blocks Boostore.pro)
 // ===================================================================
@@ -1019,7 +1019,7 @@ if ($articleId>0){
 }
 if($multilangid)$payload['multilangid']=$multilangid;
 if($exportTextOnly){
-    $keep = ['id','update_exists','delete','title','description','name','slug','language','multilangid'];
+    $keep = ['id','update_exists','delete','title','description','name','slug','language'];
     $payload = array_intersect_key($payload, array_flip($keep));
 }
 $jsonPayload=json_encode($payload,JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);$descSize=mb_strlen($description);$metaCount=count($meta);
