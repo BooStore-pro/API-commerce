@@ -1243,28 +1243,37 @@ if (!empty($fixFields)) {
         $_m = extractAllMeta($_h);
         $_slug = $_m['slug'] ?? '';
         $_lang = $_m['language'] ?? 'ru';
-        if ($_slug === '') continue;
-        $fixScan[$_slug][] = ['file' => $fp, 'lang' => $_lang, 'meta' => $_m];
+        $_grp = $_slug !== '' ? $_slug : ($_m['name'] ?? '');
+        if ($_grp === '') continue;
+        $fixScan[$_grp][] = ['file' => $fp, 'lang' => $_lang, 'meta' => $_m];
     }
     foreach ($fixScan as $_slug => $_arts) {
-        if (count($_arts) < 2) continue;
         $_ref = null;
         foreach ($_arts as $_a) { if ($_a['lang'] === $expRefLang) { $_ref = $_a; break; } }
         if (!$_ref) continue;
+        $_refId = (int)($_ref['meta']['id'] ?? 0);
+        // Reference (refLang) article: multilangid = its own id if empty/0
+        if ($_refId > 0 && in_array('multilangid', $fixFields, true)) {
+            $_refOld = (string)($_ref['meta']['multilangid'] ?? '');
+            if ($_refOld === '' || (int)$_refOld === 0) $fixMap[$_ref['file']] = ['multilangid' => (string)$_refId];
+        }
+        // Other languages in the same slug group: multilangid = reference id, other fields sync to reference
         foreach ($_arts as $_a) {
             if ($_a['lang'] === $expRefLang) continue;
             $_fixes = [];
             foreach ($fixFields as $_f) {
                 $_old = (string)($_a['meta'][$_f] ?? '');
                 if ($_f === 'multilangid') {
-                    $_refId = (int)($_ref['meta']['id'] ?? 0);
-                    if ($_old === '' && $_refId > 0) $_fixes[$_f] = (string)$_refId;
+                    if ($_refId > 0 && ($_old === '' || (int)$_old === 0)) $_fixes[$_f] = (string)$_refId;
                     continue;
                 }
                 $_new = (string)($_ref['meta'][$_f] ?? '');
                 if ($_old !== $_new) $_fixes[$_f] = $_new;
             }
-            if (!empty($_fixes)) $fixMap[$_a['file']] = $_fixes;
+            if (!empty($_fixes)) {
+                if (isset($fixMap[$_a['file']])) $fixMap[$_a['file']] = array_merge($fixMap[$_a['file']], $_fixes);
+                else $fixMap[$_a['file']] = $_fixes;
+            }
         }
     }
 }
@@ -1293,6 +1302,17 @@ if (isset($fixMap[$htmlFile])) {
         if ($_f === 'multilangid') $multilangid = $_v;
         elseif ($_f === 'status') $status = (int)$_v;
         elseif ($_f === 'datestamp') $datestampStr = $_v;
+    }
+    // Persist fixed fields back into the HTML file (only actual meta tags present)
+    $_htmlNew = !$dryRun ? @file_get_contents($htmlFile) : false;
+    if ($_htmlNew !== false) {
+        $_changed = false;
+        foreach ($fixMap[$htmlFile] as $_f => $_v) {
+            if (!preg_match('/<meta\s+name=["\']'.preg_quote($_f,'/').'["\']\s+content=["\'][^"\']*["\']\s*\/?>/is', $_htmlNew)) continue;
+            $_htmlNew = preg_replace('/<meta\s+name=["\']'.preg_quote($_f,'/').'["\']\s+content=["\'][^"\']*["\']\s*\/?>/is', '<meta name="'.$_f.'" content="'.htmlspecialchars($_v,ENT_QUOTES,'UTF-8').'">', $_htmlNew, 1);
+            $_changed = true;
+        }
+        if ($_changed) file_put_contents($htmlFile, $_htmlNew, LOCK_EX);
     }
 }
 $categoryAllowed=empty($activeCategories);
