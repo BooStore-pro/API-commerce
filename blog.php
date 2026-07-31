@@ -756,6 +756,10 @@ if ($expDateMode === 'offset' && $expDateOffsetBase !== '' && $expDateOffsetDays
     }
 }
 $dryRun = isset($_GET['dry-run']);
+// --- Search filters (defined before step 2 branch so they apply on step 2 too) ---
+$searchFilterRaw = isset($_GET['s']) ? (is_array($_GET['s']) ? $_GET['s'] : [trim($_GET['s'] ?? '')]) : [];
+$searchFilter = array_filter((array)$searchFilterRaw, function($v) { return trim($v) !== ''; });
+$searchFilter = array_values((array)$searchFilter);
 // Step 2 has its own full HTML page — skip the step 1 header
 if (!isset($_GET['step']) || $_GET['step'] !== '2'):
 ?><!DOCTYPE html>
@@ -796,9 +800,6 @@ hr{border:0;border-top:1px solid #0f3460;margin:12px 0}
 <?php
 // --- Step 1: Search filters ---
 $batchLimit = isset($_GET['batch']) ? max(1, (int)$_GET['batch']) : (int)($SEND_BATCH_LIMIT ?? 200);
-$searchFilterRaw = isset($_GET['s']) ? (is_array($_GET['s']) ? $_GET['s'] : [trim($_GET['s'] ?? '')]) : [];
-$searchFilter = array_filter($searchFilterRaw, function($v) { return trim($v) !== ''; });
-$searchFilter = array_values($searchFilter);
 // Show step 2 if confirm is set, otherwise show step 1 form
 if (!isset($_GET['confirm'])): ?>
 <script>
@@ -1023,8 +1024,18 @@ $searchFilter2 = $searchFilter;
 if (!empty($searchFilter2)) {
     $htmlFiles2 = array_filter($htmlFiles2, function($fp) use ($searchFilter2) {
         $bn = pathinfo($fp, PATHINFO_FILENAME);
+        $fields = [$bn];
+        $h = @file_get_contents($fp);
+        if ($h !== false) {
+            preg_match_all('/<meta\s+name=["\'](slug|name|title)["\']\s+content=["\'](.*?)["\']/is', $h, $mm, PREG_SET_ORDER);
+            foreach ($mm as $mv) $fields[] = $mv[2];
+        }
         foreach ($searchFilter2 as $term) {
-            if (mb_stripos($bn, trim($term)) !== false) return true;
+            $t = trim($term);
+            if ($t === '') continue;
+            foreach ($fields as $hay) {
+                if (mb_stripos($hay, $t) !== false) return true;
+            }
         }
         return false;
     });
@@ -1199,8 +1210,18 @@ $articleIdx=0;$skippedCount=0;$success=0;$errors=0;$created=0;$updated=0;
 if (!isset($_GET['files']) && !empty($searchFilter)) {
     $htmlFiles = array_filter($htmlFiles, function($fp) use ($searchFilter) {
         $bn = pathinfo($fp, PATHINFO_FILENAME);
+        $fields = [$bn];
+        $h = @file_get_contents($fp);
+        if ($h !== false) {
+            preg_match_all('/<meta\s+name=["\'](slug|name|title)["\']\s+content=["\'](.*?)["\']/is', $h, $mm, PREG_SET_ORDER);
+            foreach ($mm as $mv) $fields[] = $mv[2];
+        }
         foreach ($searchFilter as $term) {
-            if (mb_stripos($bn, trim($term)) !== false) return true;
+            $t = trim($term);
+            if ($t === '') continue;
+            foreach ($fields as $hay) {
+                if (mb_stripos($hay, $t) !== false) return true;
+            }
         }
         return false;
     });
@@ -1274,6 +1295,11 @@ if (!empty($fixFields)) {
             $_fixes = [];
             foreach ($fixFields as $_f) {
                 $_old = (string)($_a['meta'][$_f] ?? '');
+                if ($_f === 'multilangid') {
+                    $_refId = (int)($_ref['meta']['id'] ?? 0);
+                    if ($_old === '' && $_refId > 0) $_fixes[$_f] = (string)$_refId;
+                    continue;
+                }
                 $_new = (string)($_ref['meta'][$_f] ?? '');
                 if ($_old !== $_new) $_fixes[$_f] = $_new;
             }
