@@ -465,8 +465,8 @@ if ($articles !== null && !$fetchError) {
     $baseDir = $BLOG_DIR;
     foreach ($articles as $a) {
         $catId = (int)($a['category_id'] ?? 0);
+        $categoryName = $a['category_name'] ?? $a['category'] ?? ($ALLOWED_CATEGORIES[$catId] ?? '');
         if (!empty($ALLOWED_CATEGORIES) && !isset($ALLOWED_CATEGORIES[$catId])) { $skipped++; continue; }
-        $categoryName = $ALLOWED_CATEGORIES[$catId];
 $id = (int)($a['id'] ?? 0); $name = $a['name'] ?? $a['slug'] ?? '';
 $slug = $a['slug'] ?? $name; $language = $a['language'] ?? 'ru';
 // Strip language suffix from name/slug if present (e.g., "slug-ua" → "slug")
@@ -1330,7 +1330,7 @@ if ($_mcPos !== false) {
     $shortDesc = trim(mb_substr($description, 0, $_mcPos));
     $description = trim(mb_substr($description, $_mcPos + mb_strlen('<!-- MAIN CONTENT -->')));
 }
-$payload=['title'=>$title,'meta_title'=>$metaTitle,'meta_description'=>$metaDesc,'meta_keywords'=>$metaKeywords,'tags'=>$tags,'description'=>$description,'short_description'=>$shortDesc,'name'=>$slug,'slug'=>$slug,'language'=>$language,'status'=>$status,'planned'=>$planned,'datestamp'=>$datestamp,'schema'=>$schema,'priority'=>$priority,'subdomain'=>$subdomain,'view'=>$view,'settings_comments'=>$settingsComments,'settings_tags'=>$settingsTags,'comments'=>$comments,'settings_rating'=>$settingsRating,'password'=>$password,'show_tree'=>$showTree,'show_inlist'=>$showInlist,'show_period'=>$showPeriod,'rating'=>$rating];
+$payload=['title'=>$title,'meta_title'=>$metaTitle,'meta_description'=>$metaDesc,'meta_keywords'=>$metaKeywords,'tags'=>$tags,'description'=>$description,'short_description'=>$shortDesc,'name'=>$slug,'slug'=>$slug,'language'=>$language,'status'=>$status,'planned'=>$planned,'datestamp'=>$datestamp,'schema'=>$schema,'priority'=>$priority,'view'=>$view,'settings_comments'=>$settingsComments,'settings_tags'=>$settingsTags,'comments'=>$comments,'settings_rating'=>$settingsRating,'password'=>$password,'show_tree'=>$showTree,'show_inlist'=>$showInlist,'show_period'=>$showPeriod,'rating'=>$rating];
 $doDelete = (isset($meta['delete']) && strtolower($meta['delete']) === 'true');
 if ($doDelete && $articleId > 0) { $payload['delete'] = true; $payload['id'] = $articleId; }
 if($expMode !== 'insert') $payload['update_exists'] = true;

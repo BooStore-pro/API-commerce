@@ -501,12 +501,12 @@ if ($products !== null && !$fetchError) {
     $baseDir = $PRODUCTS_DIR;
     foreach ($products as $a) {
         $apiCats = $a['categories'] ?? [];
-        $catId = 0;
-        $categoryName = '';
+        $catId = (int)($a['category_id'] ?? 0);
+        $categoryName = $a['category_name'] ?? $a['category'] ?? '';
         if (!empty($apiCats)) {
             $firstCat = $apiCats[0];
-            $catId = (int)($firstCat['id'] ?? 0);
-            $categoryName = $firstCat['name'] ?? $firstCat['title'] ?? '';
+            if ($catId === 0) $catId = (int)($firstCat['id'] ?? 0);
+            if ($categoryName === '') $categoryName = $firstCat['name'] ?? $firstCat['title'] ?? '';
         }
         if (!empty($ALLOWED_CATEGORIES) && $catId > 0 && !isset($ALLOWED_CATEGORIES[$catId])) { $skipped++; continue; }
 $id = (int)($a['id'] ?? 0); $name = $a['name'] ?? $a['slug'] ?? '';
@@ -1521,7 +1521,7 @@ $description_tab_1=extractContentBySeparator($html,3);
 $description_tab_2=extractContentBySeparator($html,4);
 $description_tab_3=extractContentBySeparator($html,5);
 $description_tab_4=extractContentBySeparator($html,6);
-$payload=['title'=>$title,'meta_title'=>$metaTitle,'meta_description'=>$metaDesc,'meta_keywords'=>$metaKeywords,'tags'=>$tags,'description'=>$description,'short_description'=>$shortDesc,'description_tab_1'=>$description_tab_1,'description_tab_2'=>$description_tab_2,'description_tab_3'=>$description_tab_3,'description_tab_4'=>$description_tab_4,'name'=>$slug,'slug'=>$slug,'language'=>$language,'status'=>$status,'datestamp'=>$datestamp,'schema'=>$schema,'priority'=>$priority,'subdomain'=>$subdomain,'view'=>$view,'settings_comments'=>$settingsComments,'settings_tags'=>$settingsTags,'comments'=>$comments,'settings_rating'=>$settingsRating,'show_tree'=>$showTree,'show_inlist'=>$showInlist,'show_period'=>$showPeriod,'rating'=>$rating,'stock_status'=>(int)$stockStatus,'price'=>$productPrice,'featured'=>((int)$productHit===1?true:false),'new'=>((int)$productNew===1?true:false),'reducedprice'=>((int)$productSale===1?true:false),'promotion'=>(int)$productSale,'regular_price'=>$productPriceOld,'sku'=>$productSku,'additional'=>$productAdditional,'currency'=>$productCurrency,'access'=>$access,'stock_quantity'=>$stockQuantity,'discount'=>$discount,'moq'=>$moq,'promotion_text'=>$promotionText,'promotion_expires'=>$promotionExpires,'bought_with'=>$boughtWith,'products_synonyms'=>$productsSynonyms,'producer'=>$producerArr,'images'=>$imagesArr,'type'=>$productType,'attributes'=>$attributesArr,'variations_exists'=>$variationsExists,'variations'=>$variationsArr,'weight'=>$weight,'weight_units'=>$weightUnits,'dimensions'=>$dimensionsArr,'video'=>$video,'views'=>$views,'orders'=>$orders,'shipping_price'=>$shippingPrice,'add_date'=>$addDate,'last_edit'=>$lastEdit];
+$payload=['title'=>$title,'meta_title'=>$metaTitle,'meta_description'=>$metaDesc,'meta_keywords'=>$metaKeywords,'tags'=>$tags,'description'=>$description,'short_description'=>$shortDesc,'description_tab_1'=>$description_tab_1,'description_tab_2'=>$description_tab_2,'description_tab_3'=>$description_tab_3,'description_tab_4'=>$description_tab_4,'name'=>$slug,'slug'=>$slug,'language'=>$language,'status'=>$status,'datestamp'=>$datestamp,'schema'=>$schema,'priority'=>$priority,'view'=>$view,'settings_comments'=>$settingsComments,'settings_tags'=>$settingsTags,'comments'=>$comments,'settings_rating'=>$settingsRating,'show_tree'=>$showTree,'show_inlist'=>$showInlist,'show_period'=>$showPeriod,'rating'=>$rating,'stock_status'=>(int)$stockStatus,'price'=>$productPrice,'featured'=>((int)$productHit===1?true:false),'new'=>((int)$productNew===1?true:false),'reducedprice'=>((int)$productSale===1?true:false),'promotion'=>(int)$productSale,'regular_price'=>$productPriceOld,'sku'=>$productSku,'additional'=>$productAdditional,'currency'=>$productCurrency,'access'=>$access,'stock_quantity'=>$stockQuantity,'discount'=>$discount,'moq'=>$moq,'promotion_text'=>$promotionText,'promotion_expires'=>$promotionExpires,'bought_with'=>$boughtWith,'products_synonyms'=>$productsSynonyms,'producer'=>$producerArr,'images'=>$imagesArr,'type'=>$productType,'attributes'=>$attributesArr,'variations_exists'=>$variationsExists,'variations'=>$variationsArr,'weight'=>$weight,'weight_units'=>$weightUnits,'dimensions'=>$dimensionsArr,'video'=>$video,'views'=>$views,'orders'=>$orders,'shipping_price'=>$shippingPrice,'add_date'=>$addDate,'last_edit'=>$lastEdit];
 $doDelete = (isset($meta['delete']) && strtolower($meta['delete']) === 'true');
 if ($doDelete && $articleId > 0) { $payload['delete'] = true; $payload['id'] = $articleId; }
 if($expMode !== 'insert') $payload['update_exists'] = true;

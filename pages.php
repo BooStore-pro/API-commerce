@@ -1128,7 +1128,7 @@ if ($expDateMode === 'fixed' && $expDateFixed !== '') {
     $datestamp = dateToTimestamp($datestampStr);
 }
 $description=extractContent($html);
-$payload=['title'=>$title,'meta_title'=>$metaTitle,'meta_description'=>$metaDesc,'meta_keywords'=>$metaKeywords,'tags'=>$tags,'description'=>$description,'short_description'=>$shortDesc,'name'=>$slug,'slug'=>$slug,'slug_search'=>$slug,'language'=>$language,'status'=>$status,'datestamp'=>$datestamp,'schema'=>$schema,'priority'=>$priority,'subdomain'=>$subdomain,'view'=>$view,'settings_comments'=>$settingsComments,'settings_tags'=>$settingsTags,'comments'=>$comments,'settings_rating'=>$settingsRating,'password'=>$password,'show_tree'=>$showTree,'show_inlist'=>$showInlist,'show'=>$show,'rating'=>$rating];
+$payload=['title'=>$title,'meta_title'=>$metaTitle,'meta_description'=>$metaDesc,'meta_keywords'=>$metaKeywords,'tags'=>$tags,'description'=>$description,'short_description'=>$shortDesc,'name'=>$slug,'slug'=>$slug,'slug_search'=>$slug,'language'=>$language,'status'=>$status,'datestamp'=>$datestamp,'schema'=>$schema,'priority'=>$priority,'view'=>$view,'settings_comments'=>$settingsComments,'settings_tags'=>$settingsTags,'comments'=>$comments,'settings_rating'=>$settingsRating,'password'=>$password,'show_tree'=>$showTree,'rating'=>$rating];
 $doDelete = (isset($meta['delete']) && strtolower($meta['delete']) === 'true');
 if ($doDelete && $articleId > 0) { $payload['delete'] = true; $payload['id'] = $articleId; }
 if($expMode !== 'insert') $payload['update_exists'] = true;
