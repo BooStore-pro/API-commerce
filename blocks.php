@@ -914,7 +914,7 @@ h1{font-size:22px;color:#00d4ff;margin-bottom:5px}.meta-info{color:#888;font-siz
 endif;
 
 // === Step 3: Process selected files ===
-function extractAllMeta(string $html):array{$m=[];preg_match_all('/<meta\s+name=["\']([^"\']+)["\']\s+content=["\'](.*?)["\']\s*\/?>/is',$html,$p,PREG_SET_ORDER);if(empty($p)){preg_match_all('/<meta\s+content=["\'](.*?)["\']\s+name=["\']([^"\']+)["\']\s*\/?>/is',$html,$p,PREG_SET_ORDER);foreach($p as $x)$m[trim($x[2])]=trim($x[1]);}else{foreach($p as $x)$m[trim($x[1])]=trim($x[2]);}return $m;}
+function extractAllMeta(string $html):array{$m=[];preg_match_all('/<meta\s+name=["\']([^"\']+)["\']\s+content=["\'](.*?)["\']\s*\/?>/is',$html,$p,PREG_SET_ORDER);if(empty($p)){preg_match_all('/<meta\s+content=["\'](.*?)["\']\s+name=["\']([^"\']+)["\']\s*\/?>/is',$html,$p,PREG_SET_ORDER);foreach($p as $x)$m[trim($x[2])]=html_entity_decode(trim($x[1]), ENT_QUOTES, 'UTF-8');}else{foreach($p as $x)$m[trim($x[1])]=html_entity_decode(trim($x[2]), ENT_QUOTES, 'UTF-8');}return $m;}
 function extractContent(string $html):string{
     foreach (['<!-- CONTENT SEPARATOR BELOW -->','<!-- ARTICLE SEPARATOR BELOW -->','<-- РАЗДЕЛИТЕЛЬ СТАТЬЯ НИЖЕ --!>','<!-- PAGE SEPARATOR BELOW -->'] as $sep) {
         $p=mb_strpos($html,$sep); if ($p!==false) { $c=mb_substr($html,$p+mb_strlen($sep)); return trim($c); }
