@@ -12,8 +12,9 @@ $configFiles = [
     __DIR__ . '/_setting_shop_categories.inc',
     __DIR__ . '/_setting_shop_producers_categories.inc',
     __DIR__ . '/_setting_shop_collections_categories.inc',
+    __DIR__ . '/_setting_comments.inc',
 ];
-$configKeys = ['articles', 'pages', 'blocks', 'products', 'shop_categories', 'shop_producers', 'shop_collections'];
+$configKeys = ['articles', 'pages', 'blocks', 'products', 'shop_categories', 'shop_producers', 'shop_collections', 'comments'];
 
 function saveConfigFile($path, $sites, $keyLabel) {
     ksort($sites);
@@ -105,6 +106,7 @@ $productsCfg = __DIR__ . '/_setting_products.inc';
 $shopCategoriesCfg = __DIR__ . '/_setting_shop_categories.inc';
 $shopProducersCfg = __DIR__ . '/_setting_shop_producers_categories.inc';
 $shopCollectionsCfg = __DIR__ . '/_setting_shop_collections_categories.inc';
+$commentsCfg = __DIR__ . '/_setting_comments.inc';
 
 if (file_exists($articlesCfg)) {
     $SITES = [];
@@ -142,8 +144,16 @@ if (file_exists($shopCollectionsCfg)) {
     if (isset($SITES)) $shopCollectionsSites = $SITES;
 }
 
+// Declare comments sites (empty array init)
+$commentsSites = [];
+if (file_exists($commentsCfg)) {
+    $SITES = [];
+    require $commentsCfg;
+    if (isset($SITES)) $commentsSites = $SITES;
+}
+
 // Collect all unique domains across all configs
-$allDomains = array_keys(array_merge($articlesSites, $pagesSites, $blocksSites, $productsSites, $shopCategoriesSites, $shopProducersSites, $shopCollectionsSites));
+$allDomains = array_keys(array_merge($articlesSites, $pagesSites, $blocksSites, $productsSites, $shopCategoriesSites, $shopProducersSites, $shopCollectionsSites, $commentsSites));
 $allDomains = array_unique($allDomains);
 sort($allDomains);
 
@@ -156,6 +166,7 @@ foreach ($productsSites as $d => $c) { $siteLookup[$d][] = 'products'; }
 foreach ($shopCategoriesSites as $d => $c) { $siteLookup[$d][] = 'shop_categories'; }
 foreach ($shopProducersSites as $d => $c) { $siteLookup[$d][] = 'shop_producers'; }
 foreach ($shopCollectionsSites as $d => $c) { $siteLookup[$d][] = 'shop_collections'; }
+foreach ($commentsSites as $d => $c) { $siteLookup[$d][] = 'comments'; }
 
 // Auto-add missing domains to runtime configs so links work for any selected site
 foreach ($allDomains as $domain) {
@@ -166,6 +177,7 @@ foreach ($allDomains as $domain) {
     if (!array_key_exists($domain, $shopCategoriesSites)) { $shopCategoriesSites[$domain] = ['key' => '']; }
     if (!array_key_exists($domain, $shopProducersSites)) { $shopProducersSites[$domain] = ['key' => '']; }
     if (!array_key_exists($domain, $shopCollectionsSites)) { $shopCollectionsSites[$domain] = ['key' => '']; }
+    if (!array_key_exists($domain, $commentsSites)) { $commentsSites[$domain] = ['key' => '']; }
 }
 // Rebuild siteLookup after auto-add
 $siteLookup = [];
@@ -176,6 +188,7 @@ foreach ($productsSites as $d => $c) { $siteLookup[$d][] = 'products'; }
 foreach ($shopCategoriesSites as $d => $c) { $siteLookup[$d][] = 'shop_categories'; }
 foreach ($shopProducersSites as $d => $c) { $siteLookup[$d][] = 'shop_producers'; }
 foreach ($shopCollectionsSites as $d => $c) { $siteLookup[$d][] = 'shop_collections'; }
+foreach ($commentsSites as $d => $c) { $siteLookup[$d][] = 'comments'; }
 
 // ---- Активный сайт ----
 $activeSiteFile = __DIR__ . '/_active_site.inc';
@@ -338,6 +351,15 @@ body{background:linear-gradient(135deg,#0a0e1a 0%,#1a1a2e 50%,#16213e 100%);colo
 <span data-i18n="go_to">📥 Перейти</span> <span class="arrow">→</span>
 </a>
 </div>
+
+<div class="card" style="--card-accent:#ff5722;">
+<div class="card-icon" style="font-size:48px;margin-bottom:12px;">💬</div>
+<h2 style="color:#ff8a65;"><span data-i18n="comments">Отзывы и комментарии</span></h2>
+<p><span data-i18n="comments_desc">Управление отзывами и комментариями: импорт по ID страницы/товара,<br>фильтр по рейтингу, разбивка по папкам типов страниц</span></p>
+<a href="comments.php?site=<?=htmlspecialchars($activeSite ?: (array_key_first($commentsSites) ?: 'site.boostore.pro'))?>" class="btn" style="background:#ff5722;color:#fff;">
+<span data-i18n="go_to">📥 Перейти</span> <span class="arrow">→</span>
+</a>
+</div>
 </div>
 
 <div class="sites-section">
@@ -461,6 +483,23 @@ body{background:linear-gradient(135deg,#0a0e1a 0%,#1a1a2e 50%,#16213e 100%);colo
 </ul>
 <?php endif; ?>
 </div>
+
+<div class="site-group">
+<h4 class="pages-label" style="color:#ff8a65;"><span class="label" data-i18n="comments">💬 Отзывы и комментарии</span></h4>
+<?php if (empty($commentsSites)): ?>
+<p class="empty-msg" data-i18n="no_sites">Нет настроенных сайтов</p>
+<?php else: ?>
+<ul class="site-list">
+<?php foreach ($commentsSites as $domain => $cfg): ?>
+<li>
+<a href="comments.php?site=<?=urlencode($domain)?>" class="domain" style="color:#e0e0e0;text-decoration:none;font-family:'Consolas',monospace;font-size:12px;word-break:break-all;"><?=htmlspecialchars($domain)?></a>
+<span class="key-status <?=empty($cfg['key'])?'missing':'ok'?>"><?=empty($cfg['key'])?'<span data-i18n="no_key">✕ нет ключа</span>':'<span data-i18n="has_key">✓ ключ есть</span>'?></span>
+<form method="post" action="" style="display:inline" onsubmit="return confirm('Удалить сайт <?=htmlspecialchars($domain)?> из всех разделов?')"><input type="hidden" name="delete_domain" value="<?=htmlspecialchars($domain)?>"><button type="submit" style="background:none;border:none;color:#f44336;cursor:pointer;font-size:16px;padding:0 4px;" title="Удалить">✕</button></form>
+</li>
+<?php endforeach; ?>
+</ul>
+<?php endif; ?>
+</div>
 </div>
 </div>
 
@@ -485,9 +524,10 @@ var linksHtml = {
   products: '<a href="products.php?site=%s" class="btn" style="background:#4caf50;color:#fff;padding:8px 20px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;"><span data-i18n="link_products">📦 Товари</span> &rarr;</a>',
   shop_categories: '<a href="shop_categories.php?site=%s" class="btn" style="background:#ff6f00;color:#fff;padding:8px 20px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;"><span data-i18n="link_shop_categories">📂 Категории</span> &rarr;</a>',
   shop_producers: '<a href="shop_producers_categories.php?site=%s" class="btn" style="background:#7c4dff;color:#fff;padding:8px 20px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;"><span data-i18n="link_shop_producers">🏭 Виробники</span> &rarr;</a>',
-  shop_collections: '<a href="shop_collections_categories.php?site=%s" class="btn" style="background:#00bcd4;color:#0a0e1a;padding:8px 20px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;"><span data-i18n="link_shop_collections">📚 Колекції</span> &rarr;</a>'
+  shop_collections: '<a href="shop_collections_categories.php?site=%s" class="btn" style="background:#00bcd4;color:#0a0e1a;padding:8px 20px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;"><span data-i18n="link_shop_collections">📚 Колекції</span> &rarr;</a>',
+  comments: '<a href="comments.php?site=%s" class="btn" style="background:#ff5722;color:#fff;padding:8px 20px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;"><span data-i18n="link_comments">💬 Отзывы</span> &rarr;</a>'
 };
-var labels = {articles:'Статьи', pages:'Страницы', blocks:'Блоки/Меню', products:'Товары', shop_categories:'Категории', shop_producers:'Производители', shop_collections:'Коллекции'};
+var labels = {articles:'Статьи', pages:'Страницы', blocks:'Блоки/Меню', products:'Товары', shop_categories:'Категории', shop_producers:'Производители', shop_collections:'Коллекции', comments:'Отзывы/Комментарии'};
 function navigateSite(domain) {
   var el = document.getElementById('site_links');
   if (!domain) { el.innerHTML = ''; return; }
@@ -514,9 +554,9 @@ try { _lang = localStorage.getItem('boostore_lang') || navigator.language.slice(
 if (!['ru','en','ua'].includes(_lang)) _lang = 'ru';
 
 var _t = {
-  ru: {'title':'⚙ Центр управления','subtitle':'Импорт и экспорт данных через API Boostore.pro','site_selection':'🎯 ВЫБОР САЙТА','select_domain':'— выберите домен —','articles':'Статьи блога','pages':'Страницы','blocks':'Блоки/Меню','products':'Товары','shop_categories':'Категории магазина','shop_producers':'Производители','shop_collections':'Коллекции','articles_desc':'Управление статьями блога: импорт с API, экспорт на сервер,<br>многоязычность, категории, фильтрация','pages_desc':'Управление страницами сайта: импорт с API, экспорт на сервер,<br>многоязычность, гибкие настройки дат','blocks_desc':'Управление блоками и меню сайта: импорт с API,<br>экспорт на сервер, позиции, видимость','products_desc':'Управление товарами: импорт с API, экспорт на сервер,<br>многосекционный контент (описание, вкладки), цены, SKU','shop_categories_desc':'Управление категориями товаров: импорт с API, экспорт на сервер,<br>иерархия, родительские категории, изображения','shop_producers_desc':'Управление производителями товаров: импорт с API, экспорт на сервер,<br>иерархия, родительские производители, изображения','shop_collections_desc':'Управление коллекциями товаров: импорт с API, экспорт на сервер,<br>иерархия, родительские коллекции, изображения','go_to':'📥 Перейти','link_articles':'📝 Статьи','link_pages':'📄 Страницы','link_blocks':'🧩 Блоки','link_products':'📦 Товары','link_shop_categories':'📂 Категории','link_shop_producers':'🏭 Производители','link_shop_collections':'📚 Коллекции','connected_sites':'🔗 Подключенные сайты','domains_label':'(домены)','no_sites':'Нет настроенных сайтов','no_key':'✕ нет ключа','has_key':'✓ ключ есть','navigate':'Перейти:','setup_warning':'⚠ Сначала укажите настройки и API ключ для этого домена в соответствующем разделе','add_site':'Добавить сайт','api_docs':'Документация API','lang_ru':'Русский','lang_en':'English','lang_ua':'Українська'},
-  en: {'title':'⚙ Control Center','subtitle':'Import and export data via Boostore.pro API','site_selection':'🎯 SITE SELECTION','select_domain':'— select domain —','articles':'Blog Articles','pages':'Pages','blocks':'Blocks/Menus','products':'Products','shop_categories':'Shop Categories','shop_producers':'Producers','shop_collections':'Collections','articles_desc':'Manage blog articles: import from API, export to server,<br>multilingual, categories, filtering','pages_desc':'Manage site pages: import from API, export to server,<br>multilingual, flexible date settings','blocks_desc':'Manage blocks and menus: import from API,<br>export to server, positions, visibility','products_desc':'Manage products: import from API, export to server,<br>multi-section content (description, tabs), prices, SKU','shop_categories_desc':'Manage shop categories: import from API, export to server,<br>hierarchy, parent categories, images','shop_producers_desc':'Manage producers: import from API, export to server,<br>hierarchy, parent producers, images','shop_collections_desc':'Manage collections: import from API, export to server,<br>hierarchy, parent collections, images','go_to':'📥 Go','link_articles':'📝 Articles','link_pages':'📄 Pages','link_blocks':'🧩 Blocks','link_products':'📦 Products','link_shop_categories':'📂 Categories','link_shop_producers':'🏭 Producers','link_shop_collections':'📚 Collections','connected_sites':'🔗 Connected Sites','domains_label':'(domains)','no_sites':'No configured sites','no_key':'✕ no key','has_key':'✓ has key','navigate':'Go to:','setup_warning':'⚠ First configure settings and API key for this domain in the appropriate section','add_site':'Add Site','api_docs':'API Documentation','lang_ru':'Russian','lang_en':'English','lang_ua':'Ukrainian'},
-  ua: {'title':'⚙ Центр управління','subtitle':'Імпорт та експорт даних через API Boostore.pro','site_selection':'🎯 ВИБІР САЙТУ','select_domain':'— виберіть домен —','articles':'Статті блогу','pages':'Сторінки','blocks':'Блоки/Меню','products':'Товари','shop_categories':'Категорії магазину','shop_producers':'Виробники','shop_collections':'Колекції','articles_desc':'Управління статтями блогу: імпорт з API, експорт на сервер,<br>багатомовність, категорії, фільтрація','pages_desc':'Управління сторінками сайту: імпорт з API, експорт на сервер,<br>багатомовність, гнучкі налаштування дат','blocks_desc':'Управління блоками та меню: імпорт з API,<br>експорт на сервер, позиції, видимість','products_desc':'Управління товарами: імпорт з API, експорт на сервер,<br>багатосекційний контент (опис, вкладки), ціни, SKU','shop_categories_desc':'Управління категоріями товарів: імпорт з API, експорт на сервер,<br>ієрархія, батьківські категорії, зображення','shop_producers_desc':'Управління виробниками товарів: імпорт з API, експорт на сервер,<br>ієрархія, батьківські виробники, зображення','shop_collections_desc':'Управління колекціями товарів: імпорт з API, експорт на сервер,<br>ієрархія, батьківські колекції, зображення','go_to':'📥 Перейти','link_articles':'📝 Статті','link_pages':'📄 Сторінки','link_blocks':'🧩 Блоки','link_products':'📦 Товари','link_shop_categories':'📂 Категорії','link_shop_producers':'🏭 Виробники','link_shop_collections':'📚 Колекції','connected_sites':'🔗 Підключені сайти','domains_label':'(домени)','no_sites':'Немає налаштованих сайтів','no_key':'✕ немає ключа','has_key':'✓ ключ є','navigate':'Перейти:','setup_warning':'⚠ Спочатку вкажіть налаштування та API ключ для цього домену у відповідному розділі','add_site':'Додати сайт','api_docs':'Документація API','lang_ru':'Російська','lang_en':'English','lang_ua':'Українська'}
+  ru: {'title':'⚙ Центр управления','subtitle':'Импорт и экспорт данных через API Boostore.pro','site_selection':'🎯 ВЫБОР САЙТА','select_domain':'— выберите домен —','articles':'Статьи блога','pages':'Страницы','blocks':'Блоки/Меню','products':'Товары','shop_categories':'Категории магазина','shop_producers':'Производители','shop_collections':'Коллекции','articles_desc':'Управление статьями блога: импорт с API, экспорт на сервер,<br>многоязычность, категории, фильтрация','pages_desc':'Управление страницами сайта: импорт с API, экспорт на сервер,<br>многоязычность, гибкие настройки дат','blocks_desc':'Управление блоками и меню сайта: импорт с API,<br>экспорт на сервер, позиции, видимость','products_desc':'Управление товарами: импорт с API, экспорт на сервер,<br>многосекционный контент (описание, вкладки), цены, SKU','shop_categories_desc':'Управление категориями товаров: импорт с API, экспорт на сервер,<br>иерархия, родительские категории, изображения','shop_producers_desc':'Управление производителями товаров: импорт с API, экспорт на сервер,<br>иерархия, родительские производители, изображения','shop_collections_desc':'Управление коллекциями товаров: импорт с API, экспорт на сервер,<br>иерархия, родительские коллекции, изображения','comments':'Отзывы и комментарии','comments_desc':'Управление отзывами и комментариями: импорт по ID страницы/товара,<br>фильтр по рейтингу, разбивка по папкам типов страниц','go_to':'📥 Перейти','link_articles':'📝 Статьи','link_pages':'📄 Страницы','link_blocks':'🧩 Блоки','link_products':'📦 Товары','link_shop_categories':'📂 Категории','link_shop_producers':'🏭 Производители','link_shop_collections':'📚 Коллекции','link_comments':'💬 Отзывы','connected_sites':'🔗 Подключенные сайты','domains_label':'(домены)','no_sites':'Нет настроенных сайтов','no_key':'✕ нет ключа','has_key':'✓ ключ есть','navigate':'Перейти:','setup_warning':'⚠ Сначала укажите настройки и API ключ для этого домена в соответствующем разделе','add_site':'Добавить сайт','api_docs':'Документация API','lang_ru':'Русский','lang_en':'English','lang_ua':'Українська'},
+  en: {'title':'⚙ Control Center','subtitle':'Import and export data via Boostore.pro API','site_selection':'🎯 SITE SELECTION','select_domain':'— select domain —','articles':'Blog Articles','pages':'Pages','blocks':'Blocks/Menus','products':'Products','shop_categories':'Shop Categories','shop_producers':'Producers','shop_collections':'Collections','articles_desc':'Manage blog articles: import from API, export to server,<br>multilingual, categories, filtering','pages_desc':'Manage site pages: import from API, export to server,<br>multilingual, flexible date settings','blocks_desc':'Manage blocks and menus: import from API,<br>export to server, positions, visibility','products_desc':'Manage products: import from API, export to server,<br>multi-section content (description, tabs), prices, SKU','shop_categories_desc':'Manage shop categories: import from API, export to server,<br>hierarchy, parent categories, images','shop_producers_desc':'Manage producers: import from API, export to server,<br>hierarchy, parent producers, images','shop_collections_desc':'Manage collections: import from API, export to server,<br>hierarchy, parent collections, images','comments':'Reviews and Comments','comments_desc':'Manage reviews and comments: import by page/product ID,<br>rating filter, separate by page-type folders','go_to':'📥 Go','link_articles':'📝 Articles','link_pages':'📄 Pages','link_blocks':'🧩 Blocks','link_products':'📦 Products','link_shop_categories':'📂 Categories','link_shop_producers':'🏭 Producers','link_shop_collections':'📚 Collections','link_comments':'💬 Reviews','connected_sites':'🔗 Connected Sites','domains_label':'(domains)','no_sites':'No configured sites','no_key':'✕ no key','has_key':'✓ has key','navigate':'Go to:','setup_warning':'⚠ First configure settings and API key for this domain in the appropriate section','add_site':'Add Site','api_docs':'API Documentation','lang_ru':'Russian','lang_en':'English','lang_ua':'Ukrainian'},
+  ua: {'title':'⚙ Центр управління','subtitle':'Імпорт та експорт даних через API Boostore.pro','site_selection':'🎯 ВИБІР САЙТУ','select_domain':'— виберіть домен —','articles':'Статті блогу','pages':'Сторінки','blocks':'Блоки/Меню','products':'Товари','shop_categories':'Категорії магазину','shop_producers':'Виробники','shop_collections':'Колекції','articles_desc':'Управління статтями блогу: імпорт з API, експорт на сервер,<br>багатомовність, категорії, фільтрація','pages_desc':'Управління сторінками сайту: імпорт з API, експорт на сервер,<br>багатомовність, гнучкі налаштування дат','blocks_desc':'Управління блоками та меню: імпорт з API,<br>експорт на сервер, позиції, видимість','products_desc':'Управління товарами: імпорт з API, експорт на сервер,<br>багатосекційний контент (опис, вкладки), ціни, SKU','shop_categories_desc':'Управління категоріями товарів: імпорт з API, експорт на сервер,<br>ієрархія, батьківські категорії, зображення','shop_producers_desc':'Управління виробниками товарів: імпорт з API, експорт на сервер,<br>ієрархія, батьківські виробники, зображення','shop_collections_desc':'Управління колекціями товарів: імпорт з API, експорт на сервер,<br>ієрархія, батьківські колекції, зображення','comments':'Відгуки та коментарі','comments_desc':'Управління відгуками та коментарями: імпорт за ID сторінки/товару,<br>фільтр за рейтингом, розбивка по папках типів сторінок','go_to':'📥 Перейти','link_articles':'📝 Статті','link_pages':'📄 Сторінки','link_blocks':'🧩 Блоки','link_products':'📦 Товари','link_shop_categories':'📂 Категорії','link_shop_producers':'🏭 Виробники','link_shop_collections':'📚 Колекції','link_comments':'💬 Відгуки','connected_sites':'🔗 Підключені сайти','domains_label':'(домени)','no_sites':'Немає налаштованих сайтів','no_key':'✕ немає ключа','has_key':'✓ ключ є','navigate':'Перейти:','setup_warning':'⚠ Спочатку вкажіть налаштування та API ключ для цього домену у відповідному розділі','add_site':'Додати сайт','api_docs':'Документація API','lang_ru':'Російська','lang_en':'English','lang_ua':'Українська'}
 };
 
 function applyLang(l) {
