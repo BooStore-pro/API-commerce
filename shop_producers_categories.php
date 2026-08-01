@@ -1292,6 +1292,8 @@ $showTree=(string)(int)($meta['show_tree']??0);$showInlist=(int)($meta['show_inl
 $showPeriod=(int)($meta['show_period']??0);$schema=(int)($meta['schema']??6);
 $producerVisible=(int)($meta['producer_visible']??1);$producerText=$meta['producer_text']??'';$producerImage=$meta['producer_image']??'';
 $rating=(int)($meta['rating']??0);$datestampStr=$meta['datestamp']??'';$tags=$meta['tags']??'';$password=$meta['password']??'';
+// Декодирование меток перед отправкой на API (снимаем одно- и многократное HTML-кодирование до стабилизации)
+$_tTmp = $tags; $_tGuard = 0; while (($_tDec = html_entity_decode($_tTmp, ENT_QUOTES, 'UTF-8')) !== $_tTmp && $_tGuard++ < 10) { $_tTmp = $_tDec; } $tags = $_tTmp;
 $articleId=(int)($meta['id']??0);
 if ($articleId===0) { preg_match('/\/(\d+)[-\/]/', $htmlFile, $m); if (!empty($m[1])) $articleId=(int)$m[1]; }
 $multilangid=$meta['multilangid']??'';
