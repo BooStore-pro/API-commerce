@@ -45,6 +45,8 @@ Data fields:
 
   Collections — name, title, parent, image, text, SEO meta, etc.
 
+  Reviews & Comments — text, data, author
+
 API documentation:
   https://boostore.pro/en/docs/api-integration/#hotengine-CommerceAPI
 
