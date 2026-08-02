@@ -319,6 +319,13 @@ $url = $API_URL . '?per_page=' . $perPage . '&page=' . $requestedPage;
 if (!empty($_GET['date_after'])) $url .= '&date_after=' . urlencode($_GET['date_after']);
 if (!empty($_GET['date_before'])) $url .= '&date_before=' . urlencode($_GET['date_before']);
 if (!empty($_GET['lang'])) $url .= '&lang=' . urlencode($_GET['lang']);
+// Дополнительные фильтры на стороне API (снижение нагрузки) — только если поля непустые
+if (isset($_GET['id_min']) && trim((string)$_GET['id_min']) !== '' && is_numeric($_GET['id_min']) && (int)$_GET['id_min'] > 0) {
+    $url .= '&id_min=' . (int)$_GET['id_min'];
+}
+if (isset($_GET['id_max']) && trim((string)$_GET['id_max']) !== '' && is_numeric($_GET['id_max']) && (int)$_GET['id_max'] > 0) {
+    $url .= '&id_max=' . (int)$_GET['id_max'];
+}
 $ch = curl_init($url);
 curl_setopt_array($ch, [
     CURLOPT_RETURNTRANSFER => true,
@@ -990,7 +997,6 @@ h1{font-size:22px;color:#00d4ff;margin-bottom:5px}.meta-info{color:#888;font-siz
   <div class="toolbar">
     <button type="button" class="btn btn-sm select-all" onclick="document.querySelectorAll('.file-chk').forEach(function(c){c.checked=true;})" data-i18n="select_all">☑ ВЫДЕЛИТЬ ВСЕ</button>
     <button type="button" class="btn btn-sm deselect-all" onclick="document.querySelectorAll('.file-chk').forEach(function(c){c.checked=false;})" data-i18n="deselect_all">☐ СНЯТЬ ВСЕ</button>
-    <label style="display:inline-flex;align-items:center;gap:6px;margin-left:12px;cursor:pointer;color:#00d4ff;font-size:13px;"><input type="checkbox" name="all_files" value="1" onchange="if(this.checked){document.querySelectorAll('.file-chk').forEach(function(c){c.checked=false;});}"> <span data-i18n="all_files">📦 Все файлы</span></label>
   </div>
 
   <?php foreach ($htmlFiles2 as $filePath):
@@ -1036,7 +1042,7 @@ function extractContent(string $html):string{
 
 // Load files from step 2 selection, or scan directory as fallback
 $htmlFiles = [];
-if (!isset($_GET['all_files']) && isset($_GET['files']) && is_array($_GET['files'])) {
+if (isset($_GET['files']) && is_array($_GET['files'])) {
     foreach ($_GET['files'] as $relPath) {
         $absPath = __DIR__ . DIRECTORY_SEPARATOR . $relPath;
         if (file_exists($absPath)) $htmlFiles[] = $absPath;

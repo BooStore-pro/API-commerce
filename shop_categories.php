@@ -367,6 +367,13 @@ if (!empty($ALLOWED_CATEGORIES)) {
 if (!empty($_GET['date_after'])) $url .= '&date_after=' . urlencode($_GET['date_after']);
 if (!empty($_GET['date_before'])) $url .= '&date_before=' . urlencode($_GET['date_before']);
 if (!empty($_GET['lang'])) $url .= '&lang=' . urlencode($_GET['lang']);
+// Дополнительные фильтры на стороне API (снижение нагрузки) — только если поля непустые
+if (isset($_GET['id_min']) && trim((string)$_GET['id_min']) !== '' && is_numeric($_GET['id_min']) && (int)$_GET['id_min'] > 0) {
+    $url .= '&id_min=' . (int)$_GET['id_min'];
+}
+if (isset($_GET['id_max']) && trim((string)$_GET['id_max']) !== '' && is_numeric($_GET['id_max']) && (int)$_GET['id_max'] > 0) {
+    $url .= '&id_max=' . (int)$_GET['id_max'];
+}
 $ch = curl_init($url);
 curl_setopt_array($ch, [
     CURLOPT_RETURNTRANSFER => true,

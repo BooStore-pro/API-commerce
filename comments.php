@@ -237,6 +237,11 @@ input:focus,select:focus{outline:none;border-color:#00d4ff}.hint{color:#555;font
   <label data-i18n="per_page_label">Отзывов за запрос:</label>
   <input type="number" name="per_page" value="<?=$getPerPage?>" min="1" max="2000">
 
+  <div style="display:flex;gap:10px;">
+    <div style="flex:1;"><label data-i18n="id_min_label">ID отзыва ></label><input type="number" name="id_min" value="<?=htmlspecialchars($_GET['id_min']??'')?>" min="0" placeholder="1000" data-i18n-placeholder="id_min_placeholder"></div>
+    <div style="flex:1;"><label data-i18n="id_max_label">ID отзыва <</label><input type="number" name="id_max" value="<?=htmlspecialchars($_GET['id_max']??'')?>" min="0" placeholder="5000" data-i18n-placeholder="id_max_placeholder"></div>
+  </div>
+
   <label data-i18n="type_folder_label">Разделять по папкам типов страниц:</label>
   <select name="type_folder">
     <option value="1"<?=$typeFolder?' selected':''?>>Да</option>
@@ -248,7 +253,7 @@ input:focus,select:focus{outline:none;border-color:#00d4ff}.hint{color:#555;font
 </div>
 <script>
 var _lang='ru';try{_lang=localStorage.getItem('boostore_lang')||navigator.language.slice(0,2);localStorage.setItem('boostore_lang',_lang);}catch(e){}if(!['ru','en','ua'].includes(_lang))_lang='ru';
-var _t={ru:{'title':'Управление отзывами — Boostore.pro','import_settings':'Настройки импорта отзывов/комментариев','page_id_label':'ID страниц/товаров (page_id, пусто — все):','types_label':'Типы страниц:','per_page_label':'Отзывов за запрос:','type_folder_label':'Разделять по папкам типов страниц:','btn_get':'📥 СКАЧАТЬ ОТЗЫВЫ','btn_more':'+ ЕЩЕ','btn_more_multi':'📋 ЕЩЕ НЕСКОЛЬКО','prompt_values':'Введите ID (каждая строка — отдельный ID):','lang_ru':'Русский','lang_en':'English','lang_ua':'Українська','import':'📥 Импорт','export':'📤 Экспорт','site_label':'Сайт:'},en:{'title':'Manage Reviews — Boostore.pro','import_settings':'Review/comment import settings','page_id_label':'Page/product IDs (page_id, empty — all):','types_label':'Page types:','per_page_label':'Reviews per request:','type_folder_label':'Separate by page-type folders:','btn_get':'📥 DOWNLOAD REVIEWS','btn_more':'+ MORE','btn_more_multi':'📋 ADD MULTIPLE','prompt_values':'Enter IDs (each line is a separate ID):','lang_ru':'Russian','lang_en':'English','lang_ua':'Ukrainian','import':'📥 Import','export':'📤 Export','site_label':'Site:'},ua:{'title':'Управління відгуками — Boostore.pro','import_settings':'Налаштування імпорту відгуків/коментарів','page_id_label':'ID сторінок/товарів (page_id, порожньо — всі):','types_label':'Типи сторінок:','per_page_label':'Відгуків за запит:','type_folder_label':'Розділяти по папках типів сторінок:','btn_get':'📥 ЗАВАНТАЖИТИ ВІДГУКИ','btn_more':'+ ЩЕ','btn_more_multi':'📋 ДОДАТИ КІЛЬКА','prompt_values':'Введіть ID (кожен рядок — окремий ID):','lang_ru':'Російська','lang_en':'English','lang_ua':'Українська','import':'📥 Імпорт','export':'📤 Експорт','site_label':'Сайт:'}};
+var _t={ru:{'title':'Управление отзывами — Boostore.pro','import_settings':'Настройки импорта отзывов/комментариев','page_id_label':'ID страниц/товаров (page_id, пусто — все):','types_label':'Типы страниц:','per_page_label':'Отзывов за запрос:','id_min_label':'ID отзыва >','id_max_label':'ID отзыва <','id_min_placeholder':'1000','id_max_placeholder':'5000','type_folder_label':'Разделять по папкам типов страниц:','btn_get':'📥 СКАЧАТЬ ОТЗЫВЫ','btn_more':'+ ЕЩЕ','btn_more_multi':'📋 ЕЩЕ НЕСКОЛЬКО','prompt_values':'Введите ID (каждая строка — отдельный ID):','lang_ru':'Русский','lang_en':'English','lang_ua':'Українська','import':'📥 Импорт','export':'📤 Экспорт','site_label':'Сайт:'},en:{'title':'Manage Reviews — Boostore.pro','import_settings':'Review/comment import settings','page_id_label':'Page/product IDs (page_id, empty — all):','types_label':'Page types:','per_page_label':'Reviews per request:','id_min_label':'Review ID >','id_max_label':'Review ID <','id_min_placeholder':'1000','id_max_placeholder':'5000','type_folder_label':'Separate by page-type folders:','btn_get':'📥 DOWNLOAD REVIEWS','btn_more':'+ MORE','btn_more_multi':'📋 ADD MULTIPLE','prompt_values':'Enter IDs (each line is a separate ID):','lang_ru':'Russian','lang_en':'English','lang_ua':'Ukrainian','import':'📥 Import','export':'📤 Export','site_label':'Site:'},ua:{'title':'Управління відгуками — Boostore.pro','import_settings':'Налаштування імпорту відгуків/коментарів','page_id_label':'ID сторінок/товарів (page_id, порожньо — всі):','types_label':'Типи сторінок:','per_page_label':'Відгуків за запит:','id_min_label':'ID відгуку >','id_max_label':'ID відгуку <','id_min_placeholder':'1000','id_max_placeholder':'5000','type_folder_label':'Розділяти по папках типів сторінок:','btn_get':'📥 ЗАВАНТАЖИТИ ВІДГУКИ','btn_more':'+ ЩЕ','btn_more_multi':'📋 ДОДАТИ КІЛЬКА','prompt_values':'Введіть ID (кожен рядок — окремий ID):','lang_ru':'Російська','lang_en':'English','lang_ua':'Українська','import':'📥 Імпорт','export':'📤 Експорт','site_label':'Сайт:'}};
 function applyLang(l){try{localStorage.setItem('boostore_lang',l);}catch(e){}_lang=l;document.querySelectorAll('[data-i18n]').forEach(function(el){var key=el.getAttribute('data-i18n');if(_t[l]&&_t[l][key]!==undefined)el.innerHTML=_t[l][key];});document.getElementById('lang_switcher').value=l;}
 if(_lang!='ru'){document.addEventListener('DOMContentLoaded',function(){applyLang(_lang);});}
 document.addEventListener('DOMContentLoaded',function(){var ls=document.getElementById('lang_switcher');if(ls){ls.value=_lang;ls.addEventListener('change',function(){applyLang(this.value);});}});
@@ -276,6 +281,13 @@ foreach ($getTypes as $pt) {
     foreach ($idsToFetch as $pid) {
         $curlUrl = $API_URL . '?type=' . urlencode($ptType) . '&page_type=' . urlencode($pt) . '&per_page=' . intval($getPerPage);
         if ($pid > 0) $curlUrl .= '&page_id=' . intval($pid);
+        // Дополнительные фильтры на стороне API (снижение нагрузки) — только если поля непустые
+        if (isset($_GET['id_min']) && trim((string)$_GET['id_min']) !== '' && is_numeric($_GET['id_min']) && (int)$_GET['id_min'] > 0) {
+            $curlUrl .= '&id_min=' . (int)$_GET['id_min'];
+        }
+        if (isset($_GET['id_max']) && trim((string)$_GET['id_max']) !== '' && is_numeric($_GET['id_max']) && (int)$_GET['id_max'] > 0) {
+            $curlUrl .= '&id_max=' . (int)$_GET['id_max'];
+        }
 
         $ch = curl_init($curlUrl);
         curl_setopt_array($ch, [

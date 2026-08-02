@@ -379,12 +379,29 @@ $totalPages = 1;
 
 $url = $API_URL . '?per_page=' . $perPage . '&page=' . $requestedPage;
 if (!empty($ALLOWED_CATEGORIES)) {
-    $catIds = implode(',', array_keys($ALLOWED_CATEGORIES));
-    $url .= '&category_id=' . urlencode($catIds);
+    // Разделяем категории на указанные по ID (число) и по имени (id=0, но есть имя)
+    $catIds = [];
+    $catNames = [];
+    foreach ($ALLOWED_CATEGORIES as $cid => $cname) {
+        $cid = (int)$cid;
+        $cname = trim((string)$cname);
+        $cnameClean = preg_replace('/^cat_/', '', $cname); // "cat_0" заглушка — имя не указано
+        if ($cid > 0) { $catIds[] = $cid; }
+        elseif ($cname !== '' && $cnameClean !== '') { $catNames[] = $cname; }
+    }
+    if (!empty($catIds)) $url .= '&category_id=' . urlencode(implode(',', $catIds));
+    if (!empty($catNames)) $url .= '&category=' . urlencode(implode(',', $catNames));
 }
 if (!empty($_GET['date_after'])) $url .= '&date_after=' . urlencode($_GET['date_after']);
 if (!empty($_GET['date_before'])) $url .= '&date_before=' . urlencode($_GET['date_before']);
 if (!empty($_GET['lang'])) $url .= '&lang=' . urlencode($_GET['lang']);
+// Дополнительные фильтры для снижения нагрузки (передаются на сторону API) — только если поля непустые
+if (isset($_GET['id_min']) && trim((string)$_GET['id_min']) !== '' && is_numeric($_GET['id_min']) && (int)$_GET['id_min'] > 0) {
+    $url .= '&id_min=' . (int)$_GET['id_min'];
+}
+if (isset($_GET['id_max']) && trim((string)$_GET['id_max']) !== '' && is_numeric($_GET['id_max']) && (int)$_GET['id_max'] > 0) {
+    $url .= '&id_max=' . (int)$_GET['id_max'];
+}
 $ch = curl_init($url);
 curl_setopt_array($ch, [
     CURLOPT_RETURNTRANSFER => true,
@@ -1246,20 +1263,25 @@ if ($expIdMin > 0 || $expIdMax > 0) {
 // Apply batch limit
 $htmlFiles = array_slice($htmlFiles, 0, $batchLimit);
 // Parse export category filter from step 2 (export_cats_configured), fallback to config
+// Разделяем на категории по ID и по имени, чтобы можно было указывать несколько имён без ID.
 $activeCategories = $ALLOWED_CATEGORIES;
+$exportCatIds = [];   // список ID
+$exportCatNames = []; // список имён
 if (isset($_GET['export_cats_configured'])) {
-    $exportCats = [];
     if (isset($_GET['export_cat']) && is_array($_GET['export_cat'])) {
         foreach ($_GET['export_cat'] as $ec) {
             if (!isset($ec['checked']) || $ec['checked'] != '1') continue;
             $ecId = (int)($ec['id'] ?? 0);
             $ecName = trim($ec['name'] ?? '');
-            if ($ecId > 0 || $ecName !== '') {
-                $exportCats[$ecId] = $ecName ?: 'cat_'.$ecId;
-            }
+            if ($ecId > 0) { $exportCatIds[] = $ecId; }
+            elseif ($ecName !== '') { $exportCatNames[] = $ecName; }
         }
     }
-    $activeCategories = $exportCats; // empty = all allowed
+    $exportCatIds = array_values(array_unique(array_filter($exportCatIds)));
+    $exportCatNames = array_values(array_unique(array_filter($exportCatNames)));
+    if (empty($exportCatIds) && empty($exportCatNames)) {
+        $activeCategories = []; // пусто = все категории
+    }
 }
 $batchPayloads = []; $batchArticles = [];
 
@@ -1356,9 +1378,17 @@ if (isset($fixMap[$htmlFile])) {
         if ($_changed) file_put_contents($htmlFile, $_htmlNew, LOCK_EX);
     }
 }
-$categoryAllowed=empty($activeCategories);
-if(!$categoryAllowed&&$catId>0&&isset($activeCategories[$catId])){$categoryAllowed=true;}
-if(!$categoryAllowed&&$catId===0&&$categoryName!==''){$f=array_search($categoryName,$activeCategories,true);if($f!==false){$categoryAllowed=true;}}
+// Фильтр категорий при экспорте: пустой список = все; иначе по ID или по имени.
+$categoryAllowed = true;
+if (isset($_GET['export_cats_configured'])) {
+    $categoryAllowed = false;
+    if (!empty($exportCatIds) && $catId > 0 && in_array($catId, $exportCatIds, true)) { $categoryAllowed = true; }
+    if (!$categoryAllowed && !empty($exportCatNames) && $categoryName !== '') { if (in_array($categoryName, $exportCatNames, true)) { $categoryAllowed = true; } }
+} elseif (!empty($activeCategories)) {
+    $categoryAllowed = false;
+    if ($catId > 0 && isset($activeCategories[$catId])) { $categoryAllowed = true; }
+    if (!$categoryAllowed && $catId === 0 && $categoryName !== '') { $f = array_search($categoryName, $activeCategories, true); if ($f !== false) { $categoryAllowed = true; } }
+}
 if(!$categoryAllowed):$skippedCount++;?>
 <div class="article"><div class="article-header"><span><span class="num">#<?=$articleIdx?></span> <span class="file"><?=htmlspecialchars($relPath)?></span></span><span class="date"><?=date('Y-m-d H:i:s')?></span></div>
 <div class="article-body"><div class="result-skip"><span style="color:#888;" data-i18n="skipped_category">⏭ Пропущен — категория не входит в ALLOWED_CATEGORIES</span><?php if($catId):?><br><span class="inline-code">category_id: <?=$catId?></span><?php endif;?><?php if($categoryName):?><br><span class="inline-code">category_name: <?=htmlspecialchars($categoryName)?></span><?php endif;?></div></div></div>
