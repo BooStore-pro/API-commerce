@@ -1264,7 +1264,7 @@ if ($expIdMin > 0 || $expIdMax > 0) {
 $htmlFiles = array_slice($htmlFiles, 0, $batchLimit);
 // Parse export category filter from step 2 (export_cats_configured), fallback to config
 // Разделяем на категории по ID и по имени, чтобы можно было указывать несколько имён без ID.
-$activeCategories = $ALLOWED_CATEGORIES;
+$activeCategories = [];
 $exportCatIds = [];   // список ID
 $exportCatNames = []; // список имён
 if (isset($_GET['export_cats_configured'])) {
@@ -1380,11 +1380,11 @@ if (isset($fixMap[$htmlFile])) {
 }
 // Фильтр категорий при экспорте: пустой список = все; иначе по ID или по имени.
 $categoryAllowed = true;
-if (isset($_GET['export_cats_configured'])) {
+if (isset($_GET['export_cats_configured']) && (!empty($exportCatIds) || !empty($exportCatNames))) {
     $categoryAllowed = false;
     if (!empty($exportCatIds) && $catId > 0 && in_array($catId, $exportCatIds, true)) { $categoryAllowed = true; }
     if (!$categoryAllowed && !empty($exportCatNames) && $categoryName !== '') { if (in_array($categoryName, $exportCatNames, true)) { $categoryAllowed = true; } }
-} elseif (!empty($activeCategories)) {
+} elseif (!isset($_GET['export_cats_configured']) && !empty($activeCategories)) {
     $categoryAllowed = false;
     if ($catId > 0 && isset($activeCategories[$catId])) { $categoryAllowed = true; }
     if (!$categoryAllowed && $catId === 0 && $categoryName !== '') { $f = array_search($categoryName, $activeCategories, true); if ($f !== false) { $categoryAllowed = true; } }

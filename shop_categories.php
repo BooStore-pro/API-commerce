@@ -1216,7 +1216,7 @@ if (!isset($_GET['files']) && !empty($searchFilter)) {
 // Apply batch limit
 $htmlFiles = array_slice($htmlFiles, 0, $batchLimit);
 // Parse export category filter from step 2 (export_cats_configured), fallback to config
-$activeCategories = $ALLOWED_CATEGORIES;
+$activeCategories = [];
 if (isset($_GET['export_cats_configured'])) {
     $exportCats = [];
     if (isset($_GET['export_cat']) && is_array($_GET['export_cat'])) {
