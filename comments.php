@@ -487,7 +487,7 @@ document.addEventListener('DOMContentLoaded',function(){var ls=document.getEleme
 // Step 2: file selection
 // ===================================================================
 $htmlFiles = [];
-if (isset($_GET['files']) && is_array($_GET['files'])) {
+if (!isset($_GET['all_files']) && isset($_GET['files']) && is_array($_GET['files'])) {
     foreach ($_GET['files'] as $fp) {
         $absPath = __DIR__ . DIRECTORY_SEPARATOR . $fp;
         if (file_exists($absPath)) $htmlFiles[] = $absPath;
@@ -550,7 +550,8 @@ h1{font-size:22px;color:#00d4ff;margin-bottom:5px}.meta-info{color:#888;font-siz
   <p style="color:#888;" data-i18n="no_files_found">Нет файлов, соответствующих критериям</p>
 <?php else: ?>
   <div style="margin-bottom:10px;"><button type="button" onclick="document.querySelectorAll('.file-chk').forEach(c=>c.checked=true)" style="padding:4px 12px;background:transparent;color:#00d4ff;border:1px solid #00d4ff;border-radius:4px;cursor:pointer;" data-i18n="select_all">☑ ВЫДЕЛИТЬ ВСЕ</button>
-  <button type="button" onclick="document.querySelectorAll('.file-chk').forEach(c=>c.checked=false)" style="padding:4px 12px;background:transparent;color:#888;border:1px solid #555;border-radius:4px;cursor:pointer;margin-left:6px;" data-i18n="deselect_all">☐ СНЯТЬ ВСЕ</button></div>
+  <button type="button" onclick="document.querySelectorAll('.file-chk').forEach(c=>c.checked=false)" style="padding:4px 12px;background:transparent;color:#888;border:1px solid #555;border-radius:4px;cursor:pointer;margin-left:6px;" data-i18n="deselect_all">☐ СНЯТЬ ВСЕ</button>
+  <label style="display:inline-flex;align-items:center;gap:6px;margin-left:10px;cursor:pointer;color:#00d4ff;font-size:13px;"><input type="checkbox" name="all_files" value="1" onchange="if(this.checked){document.querySelectorAll('.file-chk').forEach(function(c){c.checked=false;});}"> <span data-i18n="all_files">📦 Все файлы</span></label></div>
   <?php foreach($htmlFiles as $fp): $relPath = str_replace(__DIR__.DIRECTORY_SEPARATOR, '', $fp); ?>
   <div class="file-row">
     <input type="checkbox" name="files[]" value="<?=htmlspecialchars($relPath)?>" checked class="file-chk">

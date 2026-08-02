@@ -1128,6 +1128,7 @@ h1{font-size:22px;color:#00d4ff;margin-bottom:5px}.meta-info{color:#888;font-siz
   <div class="toolbar">
     <button type="button" class="btn btn-sm select-all" onclick="document.querySelectorAll('.file-chk').forEach(function(c){c.checked=true;})" data-i18n="select_all">☑ ВЫДЕЛИТЬ ВСЕ</button>
     <button type="button" class="btn btn-sm deselect-all" onclick="document.querySelectorAll('.file-chk').forEach(function(c){c.checked=false;})" data-i18n="deselect_all">☐ СНЯТЬ ВСЕ</button>
+    <label style="display:inline-flex;align-items:center;gap:6px;margin-left:12px;cursor:pointer;color:#00d4ff;font-size:13px;"><input type="checkbox" name="all_files" value="1" onchange="if(this.checked){document.querySelectorAll('.file-chk').forEach(function(c){c.checked=false;});}"> <span data-i18n="all_files">📦 Все файлы</span></label>
   </div>
   <div class="card" style="padding:15px 18px;margin-bottom:16px;">
   <h3 style="margin:0 0 10px;font-size:15px;color:#4dc9f6;">📂 Категории для фильтрации</h3>
@@ -1191,7 +1192,7 @@ function extractContent(string $html):string{
 
 // Load files from step 2 selection, or scan directory as fallback
 $htmlFiles = [];
-if (isset($_GET['files']) && is_array($_GET['files'])) {
+if (!isset($_GET['all_files']) && isset($_GET['files']) && is_array($_GET['files'])) {
     foreach ($_GET['files'] as $relPath) {
         $absPath = __DIR__ . DIRECTORY_SEPARATOR . $relPath;
         if (file_exists($absPath)) $htmlFiles[] = $absPath;
