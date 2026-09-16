@@ -1352,7 +1352,7 @@ if($articleId>0){
 }
 if($expProducerId && $producerParentId>0){$payload['producers']=[['id'=>$producerParentId,'name'=>$producerName]];}
 elseif($expProducerName && $producerName!==''){$payload['producers']=[['name'=>$producerName]];}
-if($multilangid && $expFixMultilangid)$payload['multilangid']=$multilangid;
+if((string)$multilangid !== '')$payload['multilangid']=$multilangid;
 if($exportTextOnly){
     $keep = ['producer_id','id','update_exists','producer_name','producer_text','producer_button','producer_lang','slug'];
     $payload = array_intersect_key($payload, array_flip($keep));

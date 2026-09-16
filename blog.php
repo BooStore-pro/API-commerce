@@ -1409,7 +1409,7 @@ if ($_mcPos !== false) {
     $shortDesc = trim(mb_substr($description, 0, $_mcPos));
     $description = trim(mb_substr($description, $_mcPos + mb_strlen('<!-- MAIN CONTENT -->')));
 }
-$payload=['title'=>$title,'meta_title'=>$metaTitle,'meta_description'=>$metaDesc,'meta_keywords'=>$metaKeywords,'tags'=>$tags,'description'=>$description,'short_description'=>$shortDesc,'name'=>$slug,'slug'=>$slug,'language'=>$language,'status'=>$status,'planned'=>$planned,'datestamp'=>$datestamp,'schema'=>$schema,'priority'=>$priority,'view'=>$view,'settings_comments'=>$settingsComments,'settings_tags'=>$settingsTags,'comments'=>$comments,'settings_rating'=>$settingsRating,'password'=>$password,'show_tree'=>$showTree,'show_inlist'=>$showInlist,'show_period'=>$showPeriod,'rating'=>$rating];
+$payload=['title'=>$title,'meta_title'=>$metaTitle,'meta_description'=>$metaDesc,'meta_keywords'=>$metaKeywords,'tags'=>$tags,'description'=>$description,'short_description'=>$shortDesc,'name'=>$slug,'slug'=>$slug,'slug_search'=>$slug,'language'=>$language,'status'=>$status,'planned'=>$planned,'datestamp'=>$datestamp,'schema'=>$schema,'priority'=>$priority,'view'=>$view,'settings_comments'=>$settingsComments,'settings_tags'=>$settingsTags,'comments'=>$comments,'settings_rating'=>$settingsRating,'password'=>$password,'show_tree'=>$showTree,'show_inlist'=>$showInlist,'show_period'=>$showPeriod,'rating'=>$rating];
 $doDelete = (isset($meta['delete']) && strtolower($meta['delete']) === 'true');
 if ($doDelete && $articleId > 0) { $payload['delete'] = true; $payload['id'] = $articleId; }
 if($expMode !== 'insert') $payload['update_exists'] = true;
@@ -1420,7 +1420,7 @@ if($articleId>0 && ($expArticleId || $expMode==='update' || $exportTextOnly)){
 }
 if($expCategoryId && $catId>0)$payload['category_id']=$catId;
 if($expCategoryName && $categoryName!=='')$payload['category']=$categoryName;
-if($multilangid && $expFixMultilangid)$payload['multilangid']=$multilangid;
+if((string)$multilangid !== '')$payload['multilangid']=$multilangid;
 if($exportTextOnly){
     $keep = ['id','update_exists','delete','title','description','short_description','name','slug','language'];
     $payload = array_intersect_key($payload, array_flip($keep));

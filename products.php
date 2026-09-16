@@ -1594,7 +1594,7 @@ elseif($categoryName!==''){
     if($catId>0){ $payload['shop_cat_page_catid']=$catId; $payload['category_id']=$catId; }
     $payload['categories']=[['name'=>$categoryName]];
 }
-if($multilangid && $expFixMultilangid)$payload['multilangid']=$multilangid;
+if((string)$multilangid !== '')$payload['multilangid']=$multilangid;
 if($exportTextOnly){
     $keep = ['id','update_exists','delete','title','description','short_description','description_tab_1','description_tab_2','description_tab_3','description_tab_4','name','slug','language','sku'];
     $payload = array_intersect_key($payload, array_flip($keep));

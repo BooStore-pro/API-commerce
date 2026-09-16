@@ -1079,7 +1079,7 @@ if ($articleId>0){
 } elseif ($articleId === 0 && ctype_digit($slug)) {
     $payload['id'] = (int)$slug;
 }
-if($multilangid)$payload['multilangid']=$multilangid;
+if((string)$multilangid !== '')$payload['multilangid']=$multilangid;
 if($exportTextOnly){
     $keep = ['id','update_exists','delete','title','description','name','slug','language'];
     $payload = array_intersect_key($payload, array_flip($keep));
