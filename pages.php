@@ -210,6 +210,7 @@ $getSearch = isset($_GET['search']) ? (is_array($_GET['search']) ? $_GET['search
 $getSearch = array_filter($getSearch, function($v) { return trim($v) !== ''; });
 $getSearch = array_values($getSearch);
 $getSearchStr = implode('|', $getSearch);
+$getIds = isset($_GET['ids']) ? array_values(array_filter(array_map('intval', preg_split('/[,\s]+/', trim((string)$_GET['ids']))), function($v){ return $v > 0; })) : [];
 if (!isset($_GET['confirm'])): ?>
 <!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"><title>Импорт страниц — Boostore.pro</title>
 <style>body{background:#1a1a2e;color:#e0e0e0;font-family:'Segoe UI',sans-serif;padding:30px}.wrap{max-width:1200px;margin:0 auto;overflow:hidden}h1{font-size:22px;color:#00d4ff}.card{background:#16213e;border:1px solid #0f3460;border-radius:10px;padding:18px;margin-bottom:16px;transition:border-color .2s}.meta-info{color:#888;font-size:13px;margin-bottom:25px}.card:hover{border-color:#00d4ff}label{color:#888;font-size:13px;display:block;margin-bottom:4px}.chk-label{display:flex!important;align-items:center;gap:6px;cursor:pointer;color:#e0e0e0;font-size:13px}.chk-label input{width:auto}.chk-label code{background:#0d1b2a;padding:1px 5px;border-radius:3px;font-size:12px}input,select{padding:7px 10px;border:1px solid #0f3460;border-radius:5px;background:#0d1b2a;color:#e0e0e0;font-size:13px;width:100%;box-sizing:border-box;transition:border-color .2s}input:focus,select:focus{outline:none;border-color:#00d4ff;box-shadow:0 0 0 2px rgba(0,212,255,.15)}.form-row{display:flex;gap:12px;margin-bottom:12px;align-items:flex-end;flex-wrap:wrap}.form-row .field{flex:1;min-width:120px}.btn{padding:10px 24px;border:none;border-radius:6px;cursor:pointer;font-weight:600;font-size:14px;transition:all .2s}.btn-primary{background:#00d4ff;color:#1a1a2e}.btn-primary:hover{background:#4dc9f6;transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,212,255,.2)}.btn-success{background:#4caf50;color:#fff}.btn-success:hover{background:#66bb6a;transform:translateY(-1px)}button{font-family:inherit}.btn:hover{color:#fff;text-decoration:none}a{color:#00d4ff;text-decoration:none;transition:color .2s}a:hover{color:#4dc9f6}.na{color:#555}.cat-row{display:flex;gap:8px;margin-bottom:6px;align-items:center}.cat-row input{flex:1}.cat-row .btn-sm{padding:3px 8px;font-size:11px;background:#f44336;color:#fff;border:none;border-radius:3px;cursor:pointer;transition:background .2s}.cat-row .btn-sm:hover{background:#d32f2f}.plaque{background:#0f3460;border:1px solid #00d4ff;border-radius:8px;padding:12px 18px;margin-bottom:16px;font-size:14px;color:#e0e0e0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}.plaque a{font-weight:600}@media(max-width:600px){body{padding:15px}.form-row{gap:8px}.form-row .field{flex:1 1 100%}.wrap{padding:0}}</style></head><body><div class="wrap">
@@ -245,6 +246,10 @@ if (!isset($_GET['confirm'])): ?>
 <div id="search-fields"><input type="text" name="search[]" value="<?=htmlspecialchars($getSearch ? $getSearch[0] : '')?>" placeholder="часть имени, например: shoes" data-i18n-placeholder="search_placeholder" style="margin-bottom:4px;padding:7px 10px;border:1px solid #0f3460;border-radius:5px;background:#0d1b2a;color:#e0e0e0;font-size:13px;width:100%;box-sizing:border-box;"></div>
 <button type="button" onclick="var p=document.getElementById('search-fields');var inp=document.createElement('input');inp.type='text';inp.name='search[]';inp.placeholder='часть имени';inp.setAttribute('data-i18n-placeholder','search_placeholder');inp.style.cssText='display:block;margin-bottom:4px;padding:7px 10px;border:1px solid #0f3460;border-radius:5px;background:#0d1b2a;color:#e0e0e0;font-size:13px;width:100%;box-sizing:border-box';p.appendChild(inp);" style="padding:2px 10px;background:transparent;color:#00d4ff;border:1px dashed #00d4ff;border-radius:4px;cursor:pointer;font-size:11px;margin-top:2px;" data-i18n="btn_more">+ ЕЩЕ</button>
 <button type="button" onclick="var t=prompt(_t[_lang]['prompt_values'] || 'Введите значения (каждая строка — отдельное поле):');if(t){var p=document.getElementById('search-fields');var lines=t.split('\n');for(var i=0;i<lines.length;i++){var v=lines[i].trim();if(v==='')continue;var inp=document.createElement('input');inp.type='text';inp.name='search[]';inp.value=v;inp.placeholder='часть имени';inp.setAttribute('data-i18n-placeholder','search_placeholder');inp.style.cssText='display:block;margin-bottom:4px;padding:7px 10px;border:1px solid #0f3460;border-radius:5px;background:#0d1b2a;color:#e0e0e0;font-size:13px;width:100%;box-sizing:border-box';p.appendChild(inp);}}" style="padding:2px 10px;background:transparent;color:#ff9800;border:1px dashed #ff9800;border-radius:4px;cursor:pointer;font-size:11px;margin-top:2px;margin-left:4px;" data-i18n="btn_more_multi">📋 ЕЩЕ НЕСКОЛЬКО</button>
+</div>
+<div class="card">
+<label style="color:#888;font-size:13px;display:block;margin-bottom:6px;">Поиск по ID (через запятую)</label>
+<input type="text" name="ids" value="<?=htmlspecialchars($_GET['ids']??'')?>" placeholder="например: 100,250,5000" style="padding:7px 10px;border:1px solid #0f3460;border-radius:5px;background:#0d1b2a;color:#e0e0e0;font-size:13px;width:100%;box-sizing:border-box;">
 </div>
 
 <div class="card">
@@ -387,6 +392,13 @@ if ($pages !== null && !$fetchError) {
                 if (mb_stripos($n, trim($term)) !== false) return true;
             }
             return false;
+        });
+        $pages = array_values($pages);
+    }
+    // ID list filter (comma-separated)
+    if (!empty($getIds)) {
+        $pages = array_filter($pages, function($art) use ($getIds) {
+            return in_array((int)($art['id'] ?? 0), $getIds, true);
         });
         $pages = array_values($pages);
     }
