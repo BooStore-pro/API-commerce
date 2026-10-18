@@ -496,7 +496,8 @@ if ($importOnlyNamed && trim($name) === '') { $skipped++; continue; }
         $multilangid = $a['producer_multilangid']??''; $tags = $a['tags']??'';
         $producerVisible = (int)($a['producer_visible']??1);
         $producerText = $a['producer_text'] ?? '';
-        $producerImage = $a['producer_image'] ?? '';
+        $producerImageRaw = $a['producer_image'] ?? '';
+        if (is_array($producerImageRaw)) { $producerImage = $producerImageRaw['src'] ?? ''; } else { $producerImage = $producerImageRaw; }
         $producerButton = $a['producer_button'] ?? '';
         $producerShowTree = (int)($a['producer_show_tree']??0);
         $producerSettingsChild = (int)($a['producer_settings_childproductshow']??0);
@@ -1310,7 +1311,7 @@ $settingsComments=$meta['settings_comments']??'';$settingsTags=(int)($meta['sett
 $comments=(int)($meta['comments']??0);$settingsRating=(int)($meta['settings_rating']??0);
 $showTree=(string)(int)($meta['show_tree']??0);$showInlist=(int)($meta['show_inlist']??0);
 $showPeriod=(int)($meta['show_period']??0);$schema=(int)($meta['schema']??6);
-$producerVisible=(int)($meta['producer_visible']??1);$producerText=$meta['producer_text']??'';$producerImage=$meta['producer_image']??'';
+$producerVisible=(int)($meta['producer_visible']??1);$producerText=$meta['producer_text']??'';$producerImage=$meta['producer_image']??'';$producerTextPosition=(int)($meta['producer_text_position']??0);
 $rating=(int)($meta['rating']??0);$datestampStr=$meta['datestamp']??'';$tags=$meta['tags']??'';$password=$meta['password']??'';
 // Декодирование меток перед отправкой на API (снимаем одно- и многократное HTML-кодирование до стабилизации)
 $_tTmp = $tags; $_tGuard = 0; while (($_tDec = html_entity_decode($_tTmp, ENT_QUOTES, 'UTF-8')) !== $_tTmp && $_tGuard++ < 10) { $_tTmp = $_tDec; } $tags = $_tTmp;
@@ -1354,7 +1355,7 @@ if ($expDateMode === 'fixed' && $expDateFixed !== '') {
     $datestamp = dateToTimestamp($datestampStr);
 }
 $producerText=extractProducerContent($html);
-$payload=['producer_name'=>$slug,'producer_title'=>$title,'producer_lang'=>$language,'producer_parent_id'=>$producerParentId,'producer_visible'=>$producerVisible,'producer_text'=>$producerText,'producer_image'=>$producerImage,'producer_meta_d'=>$metaDesc,'producer_meta_k'=>$metaKeywords,'producer_title_inpage'=>$title,'producer_title_seo_append'=>$metaTitle,'producer_description_seo_append'=>$metaKeywords,'producer_button'=>$producerButton,'producer_settings_comments'=>$settingsComments,'producer_settings_tags'=>$settingsTags,'producer_comments'=>$comments,'producer_settings_rating'=>$settingsRating,'producer_password'=>$password,'producer_view'=>$view,'producer_rating'=>$rating,'producer_datestamp'=>$datestamp,'producer_multilangid'=>$multilangid,'tags'=>$tags,'slug'=>$slug];
+$payload=['producer_name'=>$slug,'producer_title'=>$title,'producer_lang'=>$language,'producer_parent_id'=>$producerParentId,'producer_visible'=>$producerVisible,'producer_text'=>$producerText,'producer_text_position'=>$producerTextPosition,'producer_image'=>$producerImage,'producer_meta_d'=>$metaDesc,'producer_meta_k'=>$metaKeywords,'producer_title_inpage'=>$title,'producer_title_seo_append'=>$metaTitle,'producer_description_seo_append'=>$metaKeywords,'producer_button'=>$producerButton,'producer_settings_comments'=>$settingsComments,'producer_settings_tags'=>$settingsTags,'producer_comments'=>$comments,'producer_settings_rating'=>$settingsRating,'producer_password'=>$password,'producer_view'=>$view,'producer_rating'=>$rating,'producer_datestamp'=>$datestamp,'producer_multilangid'=>$multilangid,'tags'=>$tags,'slug'=>$slug];
 $doDelete = (isset($meta['delete']) && strtolower($meta['delete']) === 'true');
 if ($doDelete && $articleId > 0) { $payload['delete'] = true; $payload['id'] = $articleId; }
 if($expMode !== 'insert') $payload['update_exists'] = true;
@@ -1366,7 +1367,7 @@ if($expProducerId && $producerParentId>0){$payload['producers']=[['id'=>$produce
 elseif($expProducerName && $producerName!==''){$payload['producers']=[['name'=>$producerName]];}
 if((string)$multilangid !== '')$payload['multilangid']=$multilangid;
 if($exportTextOnly){
-    $keep = ['producer_id','id','update_exists','producer_name','producer_text','producer_button','producer_lang','slug'];
+    $keep = ['producer_id','id','update_exists','producer_name','producer_text','producer_text_position','producer_button','producer_lang','slug'];
     $payload = array_intersect_key($payload, array_flip($keep));
 }
 $jsonPayload=json_encode($payload,JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);$descSize=mb_strlen($producerText);$metaCount=count($meta);

@@ -496,7 +496,8 @@ if ($importOnlyNamed && trim($name) === '') { $skipped++; continue; }
         $multilangid = $a['collection_multilangid']??''; $tags = $a['tags']??'';
         $collectionVisible = (int)($a['collection_visible']??1);
         $collectionText = $a['collection_text'] ?? '';
-        $collectionImage = $a['collection_image'] ?? '';
+        $collectionImageRaw = $a['collection_image'] ?? '';
+        if (is_array($collectionImageRaw)) { $collectionImage = $collectionImageRaw['src'] ?? ''; } else { $collectionImage = $collectionImageRaw; }
         $collectionButton = $a['collection_button'] ?? '';
         $collectionShowTree = (int)($a['collection_show_tree']??0);
         $collectionSettingsChild = (int)($a['collection_settings_childproductshow']??0);
@@ -1310,7 +1311,7 @@ $settingsComments=$meta['settings_comments']??'';$settingsTags=(int)($meta['sett
 $comments=(int)($meta['comments']??0);$settingsRating=(int)($meta['settings_rating']??0);
 $showTree=(string)(int)($meta['show_tree']??0);$showInlist=(int)($meta['show_inlist']??0);
 $showPeriod=(int)($meta['show_period']??0);$schema=(int)($meta['schema']??6);
-$collectionVisible=(int)($meta['collection_visible']??1);$collectionText=$meta['collection_text']??'';$collectionImage=$meta['collection_image']??'';
+$collectionVisible=(int)($meta['collection_visible']??1);$collectionText=$meta['collection_text']??'';$collectionImage=$meta['collection_image']??'';$collectionTextPosition=(int)($meta['collection_text_position']??0);
 $rating=(int)($meta['rating']??0);$datestampStr=$meta['datestamp']??'';$tags=$meta['tags']??'';$password=$meta['password']??'';
 // Декодирование меток перед отправкой на API (снимаем одно- и многократное HTML-кодирование до стабилизации)
 $_tTmp = $tags; $_tGuard = 0; while (($_tDec = html_entity_decode($_tTmp, ENT_QUOTES, 'UTF-8')) !== $_tTmp && $_tGuard++ < 10) { $_tTmp = $_tDec; } $tags = $_tTmp;
@@ -1354,7 +1355,7 @@ if ($expDateMode === 'fixed' && $expDateFixed !== '') {
     $datestamp = dateToTimestamp($datestampStr);
 }
 $collectionText=extractCollectionContent($html);
-$payload=['collection_name'=>$slug,'collection_title'=>$title,'collection_lang'=>$language,'collection_parent_id'=>$collectionParentId,'collection_visible'=>$collectionVisible,'collection_text'=>$collectionText,'collection_image'=>$collectionImage,'collection_meta_d'=>$metaDesc,'collection_meta_k'=>$metaKeywords,'collection_title_inpage'=>$title,'collection_title_seo_append'=>$metaTitle,'collection_description_seo_append'=>$metaKeywords,'collection_button'=>$collectionButton,'collection_settings_comments'=>$settingsComments,'collection_settings_tags'=>$settingsTags,'collection_comments'=>$comments,'collection_settings_rating'=>$settingsRating,'collection_password'=>$password,'collection_view'=>$view,'collection_rating'=>$rating,'collection_datestamp'=>$datestamp,'collection_multilangid'=>$multilangid,'tags'=>$tags,'slug'=>$slug];
+$payload=['collection_name'=>$slug,'collection_title'=>$title,'collection_lang'=>$language,'collection_parent_id'=>$collectionParentId,'collection_visible'=>$collectionVisible,'collection_text'=>$collectionText,'collection_text_position'=>$collectionTextPosition,'collection_image'=>$collectionImage,'collection_meta_d'=>$metaDesc,'collection_meta_k'=>$metaKeywords,'collection_title_inpage'=>$title,'collection_title_seo_append'=>$metaTitle,'collection_description_seo_append'=>$metaKeywords,'collection_button'=>$collectionButton,'collection_settings_comments'=>$settingsComments,'collection_settings_tags'=>$settingsTags,'collection_comments'=>$comments,'collection_settings_rating'=>$settingsRating,'collection_password'=>$password,'collection_view'=>$view,'collection_rating'=>$rating,'collection_datestamp'=>$datestamp,'collection_multilangid'=>$multilangid,'tags'=>$tags,'slug'=>$slug];
 $doDelete = (isset($meta['delete']) && strtolower($meta['delete']) === 'true');
 if ($doDelete && $articleId > 0) { $payload['delete'] = true; $payload['id'] = $articleId; }
 if($expMode !== 'insert') $payload['update_exists'] = true;
@@ -1366,7 +1367,7 @@ if($expCollectionId && $collectionParentId>0){$payload['collections']=[['id'=>$c
 elseif($expCollectionName && $collectionName!==''){$payload['collections']=[['name'=>$collectionName]];}
 if((string)$multilangid !== '')$payload['multilangid']=$multilangid;
 if($exportTextOnly){
-    $keep = ['collection_id','id','update_exists','collection_name','collection_text','collection_button','collection_lang','slug'];
+    $keep = ['collection_id','id','update_exists','collection_name','collection_text','collection_text_position','collection_button','collection_lang','slug'];
     $payload = array_intersect_key($payload, array_flip($keep));
 }
 $jsonPayload=json_encode($payload,JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);$descSize=mb_strlen($collectionText);$metaCount=count($meta);

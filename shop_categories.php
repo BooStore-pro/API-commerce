@@ -496,7 +496,8 @@ if ($importOnlyNamed && trim($name) === '') { $skipped++; continue; }
         $multilangid = $a['category_multilangid']??''; $tags = $a['tags']??'';
         $categoryVisible = (int)($a['category_visible']??1);
         $categoryText = $a['category_text'] ?? '';
-        $categoryImage = $a['category_image'] ?? '';
+        $categoryImageRaw = $a['category_image'] ?? '';
+        if (is_array($categoryImageRaw)) { $categoryImage = $categoryImageRaw['src'] ?? ''; } else { $categoryImage = $categoryImageRaw; }
         $categoryButton = $a['category_button'] ?? '';
         $categoryShowTree = (int)($a['category_show_tree']??0);
         $categorySettingsChild = (int)($a['category_settings_childproductshow']??0);
@@ -1310,7 +1311,7 @@ $settingsComments=$meta['settings_comments']??'';$settingsTags=(int)($meta['sett
 $comments=(int)($meta['comments']??0);$settingsRating=(int)($meta['settings_rating']??0);
 $showTree=(string)(int)($meta['show_tree']??0);$showInlist=(int)($meta['show_inlist']??0);
 $showPeriod=(int)($meta['show_period']??0);$schema=(int)($meta['schema']??6);
-$categoryVisible=(int)($meta['category_visible']??1);$categoryText=$meta['category_text']??'';$categoryImage=$meta['category_image']??'';
+$categoryVisible=(int)($meta['category_visible']??1);$categoryText=$meta['category_text']??'';$categoryImage=$meta['category_image']??'';$categoryTextPosition=(int)($meta['category_text_position']??0);
 $rating=(int)($meta['rating']??0);$datestampStr=$meta['datestamp']??'';$tags=$meta['tags']??'';$password=$meta['password']??'';
 // Декодирование меток перед отправкой на API (снимаем одно- и многократное HTML-кодирование до стабилизации)
 $_tTmp = $tags; $_tGuard = 0; while (($_tDec = html_entity_decode($_tTmp, ENT_QUOTES, 'UTF-8')) !== $_tTmp && $_tGuard++ < 10) { $_tTmp = $_tDec; } $tags = $_tTmp;
@@ -1354,7 +1355,7 @@ if ($expDateMode === 'fixed' && $expDateFixed !== '') {
     $datestamp = dateToTimestamp($datestampStr);
 }
 $categoryText=extractCategoryContent($html);
-$payload=['category_name'=>$slug,'category_title'=>$title,'category_lang'=>$language,'category_parent_id'=>$parentId,'category_visible'=>$categoryVisible,'category_text'=>$categoryText,'category_image'=>$categoryImage,'category_meta_d'=>$metaDesc,'category_meta_k'=>$metaKeywords,'category_title_inpage'=>$title,'category_title_seo_append'=>$metaTitle,'category_description_seo_append'=>$metaKeywords,'category_button'=>$shortDesc,'category_settings_comments'=>$settingsComments,'category_settings_tags'=>$settingsTags,'category_comments'=>$comments,'category_settings_rating'=>$settingsRating,'category_password'=>$password,'category_view'=>$view,'category_rating'=>$rating,'category_datestamp'=>$datestamp,'category_multilangid'=>$multilangid,'tags'=>$tags,'slug'=>$slug];
+$payload=['category_name'=>$slug,'category_title'=>$title,'category_lang'=>$language,'category_parent_id'=>$parentId,'category_visible'=>$categoryVisible,'category_text'=>$categoryText,'category_text_position'=>$categoryTextPosition,'category_image'=>$categoryImage,'category_meta_d'=>$metaDesc,'category_meta_k'=>$metaKeywords,'category_title_inpage'=>$title,'category_title_seo_append'=>$metaTitle,'category_description_seo_append'=>$metaKeywords,'category_button'=>$shortDesc,'category_settings_comments'=>$settingsComments,'category_settings_tags'=>$settingsTags,'category_comments'=>$comments,'category_settings_rating'=>$settingsRating,'category_password'=>$password,'category_view'=>$view,'category_rating'=>$rating,'category_datestamp'=>$datestamp,'category_multilangid'=>$multilangid,'tags'=>$tags,'slug'=>$slug];
 $doDelete = (isset($meta['delete']) && strtolower($meta['delete']) === 'true');
 if ($doDelete && $articleId > 0) { $payload['delete'] = true; $payload['id'] = $articleId; }
 if($expMode !== 'insert') $payload['update_exists'] = true;
@@ -1366,7 +1367,7 @@ if($expCategoryId && $parentId>0){$payload['categories']=[['id'=>$parentId,'name
 elseif($expCategoryName && $categoryName!==''){$payload['categories']=[['name'=>$categoryName]];}
 if((string)$multilangid !== '')$payload['multilangid']=$multilangid;
 if($exportTextOnly){
-    $keep = ['category_id','id','update_exists','category_name','category_text','category_button','category_lang','slug'];
+    $keep = ['category_id','id','update_exists','category_name','category_text','category_text_position','category_button','category_lang','slug'];
     $payload = array_intersect_key($payload, array_flip($keep));
 }
 $jsonPayload=json_encode($payload,JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);$descSize=mb_strlen($categoryText);$metaCount=count($meta);
