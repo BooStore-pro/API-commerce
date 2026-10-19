@@ -1434,7 +1434,7 @@ if($expCategoryId && $catId>0)$payload['category_id']=$catId;
 if($expCategoryName && $categoryName!=='')$payload['category']=$categoryName;
 if((string)$multilangid !== '')$payload['multilangid']=$multilangid;
 if($exportTextOnly){
-    $keep = ['id','update_exists','delete','title','description','short_description','name','slug','language'];
+    $keep = ['id','slug_search','update_exists','delete','title','description','short_description','name','slug','language'];
     $payload = array_intersect_key($payload, array_flip($keep));
 }
 $jsonPayload=json_encode($payload,JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);$descSize=mb_strlen($description);$metaCount=count($meta);

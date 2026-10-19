@@ -1048,6 +1048,7 @@ $script=(int)($meta['script']??0);$scriptAsync=(int)($meta['script_async']??0);
 $div=(int)($meta['div']??0);
 $description=extractContent($html);
 $blockId = (int)($meta['id'] ?? 0);
+$articleId = $blockId;
 $doDelete = (isset($meta['delete']) && strtolower($meta['delete']) === 'true');
 $multilangid=$meta['multilangid']??'';
 // Apply export fix by reference (overrides from reference article)
@@ -1093,7 +1094,7 @@ if ($articleId>0){
 }
 if((string)$multilangid !== '')$payload['multilangid']=$multilangid;
 if($exportTextOnly){
-    $keep = ['id','update_exists','delete','title','description','name','slug','language'];
+    $keep = ['id','slug_search','update_exists','delete','title','description','name','slug','language'];
     $payload = array_intersect_key($payload, array_flip($keep));
 }
 $jsonPayload=json_encode($payload,JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);$descSize=mb_strlen($description);$metaCount=count($meta);
@@ -1118,7 +1119,7 @@ $batchArticles[] = ['slug'=>$slug, 'relPath'=>$relPath, 'multilangid'=>$multilan
 // === Batch API request ===
 if (!empty($batchPayloads) && !$dryRun):
 $batchJson = json_encode(['blocks' => $batchPayloads], JSON_UNESCAPED_UNICODE);
-$httpMethod = 'POST';
+$httpMethod = ($expMode === 'update') ? 'PUT' : 'POST';
 $ch=curl_init($API_URL);
 curl_setopt_array($ch,[CURLOPT_CUSTOMREQUEST=>$httpMethod,CURLOPT_POSTFIELDS=>$batchJson,CURLOPT_RETURNTRANSFER=>true,CURLOPT_HTTPHEADER=>["Authorization: Bearer ".$AUTH_KEY,"Content-Type: application/json"],CURLOPT_FOLLOWLOCATION=>true,CURLOPT_CONNECTTIMEOUT=>60,CURLOPT_TIMEOUT=>300,CURLOPT_SSL_VERIFYHOST=>0,CURLOPT_SSL_VERIFYPEER=>0]);
 $responseBody=curl_exec($ch);$httpCode=curl_getinfo($ch,CURLINFO_HTTP_CODE);$curlError=curl_error($ch);curl_close($ch);
